@@ -253,10 +253,16 @@
     var pin = $(".process__pin", process);
     process.classList.add("is-pinned");
 
+    // The last stretch of the section is a tail: progress has already reached
+    // its end there, so the final step stays centred while the section scrolls
+    // away, rather than sliding off mid-step.
+    function span() {
+      var full = process.offsetHeight - (pin ? pin.offsetHeight : window.innerHeight);
+      return Math.max(1, full - window.innerHeight * 0.4);
+    }
+
     function travel() {
-      var rect = process.getBoundingClientRect();
-      var span = process.offsetHeight - (pin ? pin.offsetHeight : window.innerHeight);
-      return clamp01(span > 0 ? -rect.top / span : 0);
+      return clamp01(-process.getBoundingClientRect().top / span());
     }
 
     // Clicking a node scrolls to that step's slice rather than to the element,
@@ -266,8 +272,7 @@
       if (!link) return;
       link.addEventListener("click", function (e) {
         e.preventDefault();
-        var span = process.offsetHeight - (pin ? pin.offsetHeight : window.innerHeight);
-        var slice = span / steps.length;
+        var slice = span() / steps.length;
         window.scrollTo({
           top: process.offsetTop + slice * i + slice * 0.5,
           behavior: "smooth"
