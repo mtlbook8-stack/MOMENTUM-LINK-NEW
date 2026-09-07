@@ -213,14 +213,15 @@
       panel.addEventListener("mouseenter", function () { if (finePointer) open(panel); });
       panel.addEventListener("focus", function () { open(panel); });
 
-      // Without hover there is nothing to expand a panel, and the panel is a
-      // link — so the first tap expands it and only a second tap follows it.
+      // One tap expands, a second opens the sector. Keyed off whether the panel
+      // is already expanded rather than off pointer detection, so it holds on
+      // any device — including the tablets and hybrids that claim hover.
+      // Where hover does work the panel is already open by the time a click
+      // lands, so a click there still follows the link first time.
       panel.addEventListener("click", function (e) {
-        if (finePointer) return;
-        if (!panel.classList.contains("is-open")) {
-          e.preventDefault();
-          open(panel);
-        }
+        if (panel.classList.contains("is-open")) return;
+        e.preventDefault();
+        open(panel);
       });
     });
   }

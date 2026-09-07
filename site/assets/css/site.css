@@ -800,13 +800,13 @@ a:hover { color: var(--rust); }
   letter-spacing: .22em;
   text-transform: uppercase;
   color: rgba(247, 245, 240, .86);
-  /* Pivots from its own foot, so it tips away rather than sliding sideways. */
-  transform-origin: 0 100%;
+  /* Turns about its own centre — pivoting from a corner throws the rotated
+     label clear of the panel, where overflow clips all but its last letters. */
   transition: opacity .45s ease, transform .55s var(--ease-expo);
 }
 .panel.is-open .panel__rail {
   opacity: 0;
-  transform: rotate(200deg) translateY(8px);
+  transform: rotate(196deg);
 }
 .panel__body {
   position: absolute;
