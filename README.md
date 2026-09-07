@@ -195,6 +195,28 @@ python build-media.py src/media site/media
 lives only in your local copy — keep it if you want to re-encode the artwork later. The
 generated `site/media` files are committed, so the repository alone is enough to deploy.
 
+## Page grounds
+
+The cream is the constant; each page carries a different texture over it, drawn from
+the same palette and kept far enough back to read as paper rather than decoration:
+
+| Page | Ground |
+|---|---|
+| Home | Pools of light — the blue and rust washes the hero opens on |
+| Practice | Measured vertical rules, echoing the timeline |
+| Industries | A drawing-board hatch |
+| Technology | A schematic dot grid |
+| Contact | A single wash falling off the dark hero |
+
+All five share a fine paper grain, and the dark bands (stats, footer) carry a soft blue
+gradient so they are not flat slabs against it. Each page is tagged `data-page` on
+`<body>`; the rules live under *Page grounds* in `site.css`.
+
+The whole ground is painted on one fixed pseudo-element behind the content rather than
+with `background-attachment: fixed`, which forces a full repaint on every scroll — this
+site does enough scroll work already. That is why the cream sits on `<html>` and `<body>`
+is transparent.
+
 ## Accessibility and SEO notes
 
 Skip link, keyboard-operable navigation and overlay, visible focus rings, labelled form

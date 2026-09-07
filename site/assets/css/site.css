@@ -37,7 +37,7 @@ html { scroll-behavior: smooth; }
 
 body {
   margin: 0;
-  background: var(--cream);
+  background: transparent;   /* the cream lives on <html>; see Page grounds */
   color: var(--ink);
   font-family: var(--sans);
   font-weight: 300;
@@ -48,6 +48,96 @@ body {
 }
 
 body.is-locked { overflow: hidden; }
+
+/* ── Page grounds ─────────────────────────────────────────────────────────
+   The cream stays the constant; each page earns a different texture on top
+   of it, drawn from the same palette and kept far enough back that it reads
+   as paper rather than decoration. Dark sections paint over it as before.
+
+   It is drawn on one fixed pseudo-element behind the content rather than with
+   background-attachment: fixed, which forces a full repaint on every scroll —
+   this page does enough scroll work already.
+   ------------------------------------------------------------------------ */
+
+:root {
+  /* A fine paper grain, shared by every page. */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)' opacity='.19'/%3E%3C/svg%3E");
+}
+
+html { background-color: var(--cream); }
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: var(--grain);
+  background-size: 160px 160px;
+}
+
+/* Home — the pools of light the hero opens on. */
+body[data-page="home"]::before {
+  background-image:
+    var(--grain),
+    radial-gradient(58vw 58vw at 10% 2%, rgba(74, 155, 232, .24), transparent 62%),
+    radial-gradient(52vw 52vw at 94% 74%, rgba(194, 84, 47, .14), transparent 60%),
+    radial-gradient(46vw 46vw at 50% 108%, rgba(140, 127, 107, .16), transparent 62%);
+  background-size: 160px 160px, auto, auto, auto;
+  background-repeat: repeat, no-repeat, no-repeat, no-repeat;
+}
+
+/* Practice — measured vertical rules, echoing the timeline. */
+body[data-page="practice"]::before {
+  background-image:
+    var(--grain),
+    repeating-linear-gradient(90deg, rgba(16, 34, 47, .07) 0 1px, transparent 1px 108px),
+    radial-gradient(56vw 56vw at 88% 4%, rgba(74, 155, 232, .2), transparent 64%),
+    radial-gradient(48vw 48vw at 4% 92%, rgba(140, 127, 107, .18), transparent 62%);
+  background-size: 160px 160px, auto, auto, auto;
+  background-repeat: repeat, repeat, no-repeat, no-repeat;
+}
+
+/* Industries — a drawing-board hatch. */
+body[data-page="industries"]::before {
+  background-image:
+    var(--grain),
+    repeating-linear-gradient(45deg, rgba(16, 34, 47, .05) 0 1px, transparent 1px 15px),
+    radial-gradient(54vw 54vw at 4% 8%, rgba(140, 127, 107, .24), transparent 62%),
+    radial-gradient(50vw 50vw at 96% 78%, rgba(74, 155, 232, .17), transparent 62%);
+  background-size: 160px 160px, auto, auto, auto;
+  background-repeat: repeat, repeat, no-repeat, no-repeat;
+}
+
+/* Technology — a schematic dot grid. */
+body[data-page="technology"]::before {
+  background-image:
+    var(--grain),
+    radial-gradient(circle, rgba(16, 34, 47, .12) .9px, transparent 1.3px),
+    radial-gradient(60vw 60vw at 92% 2%, rgba(74, 155, 232, .22), transparent 64%),
+    radial-gradient(48vw 48vw at 6% 88%, rgba(140, 127, 107, .18), transparent 62%);
+  background-size: 160px 160px, 26px 26px, auto, auto;
+  background-repeat: repeat, repeat, no-repeat, no-repeat;
+}
+
+/* Contact — a single wash off the dark hero. */
+body[data-page="contact"]::before {
+  background-image:
+    var(--grain),
+    radial-gradient(72vw 46vw at 84% 0%, rgba(74, 155, 232, .24), transparent 66%),
+    radial-gradient(48vw 48vw at 2% 90%, rgba(140, 127, 107, .2), transparent 62%),
+    radial-gradient(40vw 40vw at 60% 52%, rgba(194, 84, 47, .09), transparent 60%);
+  background-size: 160px 160px, auto, auto, auto;
+  background-repeat: repeat, no-repeat, no-repeat, no-repeat;
+}
+
+/* The dark bands get depth too, so they are not flat slabs against it. */
+.stats {
+  background-image: radial-gradient(70% 160% at 12% 0%, rgba(74, 155, 232, .22), transparent 70%);
+}
+.site-footer {
+  background-image: radial-gradient(60% 150% at 88% 0%, rgba(74, 155, 232, .18), transparent 72%);
+}
 
 img { max-width: 100%; display: block; }
 

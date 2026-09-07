@@ -287,7 +287,7 @@ def head(title, description, page, extra=""):
   <link rel="stylesheet" href="assets/css/site.css?v={asset_version("assets/css/site.css")}">
   <script>document.documentElement.className = document.documentElement.className.replace("no-js", "js");</script>
 {extra}</head>
-<body>
+<body data-page="{page or 'home'}">
   <a class="skip-link" href="#main">Skip to content</a>
 """
 
