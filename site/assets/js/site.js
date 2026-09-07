@@ -244,19 +244,32 @@
         fill.style.transform = (window.innerWidth <= 900 ? "scaleX(" : "scaleY(") + travelled + ")";
       }
 
-      // A step is open while it sits inside the reading band, and folds away
-      // again once it leaves. Driven from the scroll pass rather than an
-      // observer so a step is never left collapsed and unreadable.
-      var top = window.innerHeight * 0.9;
-      var bottom = window.innerHeight * 0.08;
+      // Exactly one step is open at a time: the one nearest the reading line.
+      // Reaching the next one folds this one back into its circle first, so the
+      // sequence reads project, fade, project — never two at once.
       var current = 0;
       var best = Infinity;
 
       steps.forEach(function (el, i) {
         var box = el.getBoundingClientRect();
-        el.classList.toggle("is-active", box.top < top && box.bottom > bottom);
         var distance = Math.abs(box.top + box.height / 2 - mid);
         if (distance < best) { best = distance; current = i; }
+      });
+
+      steps.forEach(function (el, i) {
+        el.classList.toggle("is-active", i === current);
+
+        // Anchor the panel's growth on its own node in the rail, so it really
+        // does project out of that circle rather than from a fixed corner.
+        var box = el.getBoundingClientRect();   // untransformed: the scale sits on the child
+        var inner = el.firstElementChild;
+        var node = points[i] && points[i].querySelector(".process__thumb");
+        if (inner && node) {
+          var dot = node.getBoundingClientRect();
+          inner.style.transformOrigin =
+            Math.round(dot.left + dot.width / 2 - box.left) + "px " +
+            Math.round(dot.top + dot.height / 2 - box.top) + "px";
+        }
       });
 
       points.forEach(function (el, i) {

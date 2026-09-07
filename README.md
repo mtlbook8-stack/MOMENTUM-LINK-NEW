@@ -137,18 +137,20 @@ Keyboard focus expands a panel on both. Styles live under *Sector panels* in
 
 ## The practice as a process
 
-The six steps read as a journey. A road map runs the full height of the viewport
-beside them, sticky while you scroll: all six steps shown as small panels, with a
-spine line marking how far you have travelled.
+The six steps read as a journey along a timeline. A thread runs the full height of the
+viewport beside them, sticky while you scroll: six round, cropped stills strung on a
+3px line, with the travelled portion drawn in blue behind you.
 
-The rail behaves like the sector accordion, turned into navigation — the step you are
-reading physically expands (3.2 : 1 against the collapsed ones, same expo easing)
-while the others shrink back. Its miniature clears out of the rail as it opens, and
-the step's panel zooms out of that emptied slot into the column alongside, so the
-picture is never shown in two places at once. Clicking a step jumps to it.
+**One step is open at a time.** The step nearest the reading line is the open one — its
+node swells on the thread and its panel projects out of that circle into the column
+alongside. Reaching the next step folds the current panel back into its own circle
+before the next one projects, so the page reads project, fade, project, rather than
+having two panels open at once. The panel's `transform-origin` is set from its node's
+live position each scroll pass, so it genuinely grows out of that circle rather than
+from a fixed corner. Clicking a node jumps to its step.
 
-On a phone the rail lies down into a strip pinned under the header — the same
-miniatures expanding sideways, and panels zooming down out of it instead of sideways.
+On a phone the thread lies down under the header — the same nodes on a horizontal
+line, the same one-at-a-time projection.
 
 Activation is computed in the shared scroll pass (`initProcess()` in `site.js`) rather
 than from an observer, so a step is never left collapsed and unreadable if callbacks
