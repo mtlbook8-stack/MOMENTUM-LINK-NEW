@@ -552,13 +552,15 @@ def build_practice():
     </section>
 
     <div class="process shell" data-process>
-      <nav class="process__rail" aria-label="The six steps">
-        <span class="process__track" aria-hidden="true"><span class="process__fill" data-process-fill></span></span>
-        <ol class="process__points">{points}
-        </ol>
-      </nav>
+      <div class="process__pin">
+        <nav class="process__rail" aria-label="The six steps">
+          <span class="process__track" aria-hidden="true"><span class="process__fill" data-process-fill></span></span>
+          <ol class="process__points">{points}
+          </ol>
+        </nav>
 
-      <div class="process__steps">{steps}
+        <div class="process__stage">{steps}
+        </div>
       </div>
     </div>
   </main>

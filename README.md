@@ -144,20 +144,23 @@ The six steps read as a journey along a timeline. A thread runs the full height 
 viewport beside them, sticky while you scroll: six round, cropped stills strung on a
 3px line, with the travelled portion drawn in blue behind you.
 
-**One step is open at a time.** The step nearest the reading line is the open one — its
-node swells on the thread and its panel projects out of that circle into the column
-alongside. Reaching the next step folds the current panel back into its own circle
-before the next one projects, so the page reads project, fade, project, rather than
-having two panels open at once. The panel's `transform-origin` is set from its node's
-live position each scroll pass, so it genuinely grows out of that circle rather than
-from a fixed corner. Clicking a node jumps to its step.
+**The section is pinned, and one step is open at a time.** The steps do not scroll
+past — the whole process holds still in the middle of the screen and scrolling only
+decides which step is projected. Each step owns a slice of the section's height; on
+reaching its slice, its node swells on the thread and its panel projects out of that
+circle into the centre of the screen, while the previous one folds back into its own
+circle. Never two at once, and nothing inside the pinned area scrolls. The panel's
+`transform-origin` is set from its node's live position each scroll pass, so it
+genuinely grows out of that circle rather than from a fixed corner. Clicking a node
+scrolls to that step's slice.
 
-On a phone the thread lies down under the header — the same nodes on a horizontal
-line, the same one-at-a-time projection.
+On a phone the thread lies across the top of the pinned area and the panel fills what
+is left, sized to fit without a scrollbar of its own.
 
 Activation is computed in the shared scroll pass (`initProcess()` in `site.js`) rather
 than from an observer, so a step is never left collapsed and unreadable if callbacks
-are throttled. Under `prefers-reduced-motion` every panel is simply open.
+are throttled. Under `prefers-reduced-motion` the section is not pinned at all — the
+steps stay a plain readable column, which is also what a visitor without JavaScript gets.
 
 ## The technology deck
 

@@ -967,6 +967,40 @@ a:hover { color: var(--rust); }
   padding-bottom: 104px;
 }
 
+/*
+   Pinned mode: the section is tall enough to give each step a slice of
+   scrolling, but the steps themselves never move — one sits centred at a
+   time and scrolling only decides which one is projected. Applied by JS
+   (`is-pinned`), so without it — or under reduced motion — the steps stay a
+   plain readable column.
+*/
+.process.is-pinned {
+  display: block;
+  height: calc(6 * 88vh);
+  padding-bottom: 0;
+}
+.process.is-pinned .process__pin {
+  position: sticky;
+  top: var(--header-h);
+  height: calc(100vh - var(--header-h));
+  display: grid;
+  grid-template-columns: 210px minmax(0, 1fr);
+  gap: 60px;
+  align-items: center;
+  overflow: hidden;
+}
+.process.is-pinned .process__rail { position: static; height: 100%; }
+.process.is-pinned .process__stage { position: relative; height: 100%; }
+.process.is-pinned .step {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+}
+.process.is-pinned .step.is-active { pointer-events: auto; }
+.process.is-pinned .step__inner { width: 100%; max-height: 100%; }
+
 .process__rail {
   /* One continuous timeline: round, cropped stills threaded onto a line that
      runs the height of the viewport. */
@@ -1072,7 +1106,7 @@ a:hover { color: var(--rust); }
 .process__item.is-current .process__num { color: var(--blue-dark); }
 .process__item.is-current .process__label { opacity: 1; transform: none; }
 
-.process__steps { display: flex; flex-direction: column; gap: 96px; }
+.process__steps, .process__stage { display: flex; flex-direction: column; gap: 96px; }
 
 .step { scroll-margin-top: calc(var(--header-h) + 40px); }
 .step__inner {
@@ -1148,8 +1182,31 @@ a:hover { color: var(--rust); }
   .process__meta { align-items: center; }
   .process__num { font-size: 9px; }
   .process__label { display: none; }
-  .process__steps { gap: 56px; }
+  .process__steps, .process__stage { gap: 56px; }
   .js .step__inner { transform: scale(.16); }
+
+  /* Pinned on a phone: the thread sits across the top of the pinned area and
+     the panel fills what is left, still without a scrollbar of its own. */
+  .process.is-pinned { height: calc(6 * 84vh); }
+  .process.is-pinned .process__pin {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 14px;
+    align-items: stretch;
+  }
+  .process.is-pinned .process__rail {
+    position: static;
+    height: auto;
+    margin: 0;
+    padding-inline: 0;
+    background: none;
+    border-bottom: 0;
+  }
+  .process.is-pinned .process__track { left: 22px; right: 22px; }
+  .process.is-pinned .step__inner { padding: 18px; gap: 16px; }
+  .process.is-pinned .step__media { aspect-ratio: 2 / 1; }
+  .process.is-pinned .step__body { font-size: 15px; line-height: 1.55; }
+  .process.is-pinned .step__title { font-size: clamp(21px, 5.6vw, 26px); }
 }
 
 /* ── Sector sections (industries page) ────────────────────────────────── */

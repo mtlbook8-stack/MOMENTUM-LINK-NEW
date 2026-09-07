@@ -248,27 +248,40 @@
       return;
     }
 
-    return function () {
+    // Pin the section: the steps stop moving, and scrolling only chooses which
+    // one is projected out of the rail.
+    var pin = $(".process__pin", process);
+    process.classList.add("is-pinned");
+
+    function travel() {
       var rect = process.getBoundingClientRect();
-      var mid = window.innerHeight * 0.42;
+      var span = process.offsetHeight - (pin ? pin.offsetHeight : window.innerHeight);
+      return clamp01(span > 0 ? -rect.top / span : 0);
+    }
 
-      // How far the reader has travelled through the whole run of steps.
-      var travelled = clamp01((mid - rect.top) / (rect.height || 1));
-      if (fill) {
-        fill.style.transform = (window.innerWidth <= 900 ? "scaleX(" : "scaleY(") + travelled + ")";
-      }
-
-      // Exactly one step is open at a time: the one nearest the reading line.
-      // Reaching the next one folds this one back into its circle first, so the
-      // sequence reads project, fade, project — never two at once.
-      var current = 0;
-      var best = Infinity;
-
-      steps.forEach(function (el, i) {
-        var box = el.getBoundingClientRect();
-        var distance = Math.abs(box.top + box.height / 2 - mid);
-        if (distance < best) { best = distance; current = i; }
+    // Clicking a node scrolls to that step's slice rather than to the element,
+    // which in pinned mode no longer has a position of its own.
+    points.forEach(function (point, i) {
+      var link = point.querySelector("a");
+      if (!link) return;
+      link.addEventListener("click", function (e) {
+        e.preventDefault();
+        var span = process.offsetHeight - (pin ? pin.offsetHeight : window.innerHeight);
+        var slice = span / steps.length;
+        window.scrollTo({
+          top: process.offsetTop + slice * i + slice * 0.5,
+          behavior: "smooth"
+        });
       });
+    });
+
+    return function () {
+      var p = travel();
+      var current = Math.min(steps.length - 1, Math.floor(p * steps.length));
+
+      if (fill) {
+        fill.style.transform = (window.innerWidth <= 900 ? "scaleX(" : "scaleY(") + p + ")";
+      }
 
       steps.forEach(function (el, i) {
         el.classList.toggle("is-active", i === current);
