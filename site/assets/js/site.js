@@ -86,6 +86,11 @@
     var bar = $("[data-stage-bar]", stage);
     var count = $("[data-stage-count]", stage);
     var cue = $("[data-stage-cue]", stage);
+    // The opening frame — everything that dresses the very first view.
+    var backdrop = $("[data-stage-backdrop]", stage);
+    var glow = $("[data-stage-glow]", stage);
+    var frame = $("[data-stage-frame]", stage);
+    var intro = $("[data-stage-intro]", stage);
 
     return function () {
       var rect = stage.getBoundingClientRect();
@@ -124,6 +129,14 @@
       if (bar) bar.style.transform = "scaleX(" + p + ")";
       if (count) count.textContent = (p > 0.6 ? "02" : "01") + " / 02";
       if (cue) cue.style.opacity = String(1 - ease(seg(p, 0, 0.14)));
+
+      // Clear the opening frame as soon as the plate starts growing, so the
+      // sequence from here on is exactly what it always was.
+      var opening = 1 - ease(seg(p, 0, 0.13));
+      if (glow) glow.style.opacity = String(opening);
+      if (frame) frame.style.opacity = String(opening);
+      if (intro) intro.style.opacity = String(opening);
+      if (backdrop) backdrop.style.opacity = String(0.5 * (1 - ease(seg(p, 0, 0.24))));
     };
   }
 

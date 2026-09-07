@@ -103,8 +103,11 @@ set `BASE_URL` in `build.py` to it, and rebuild so the canonical URLs and sitema
 navigable with JavaScript disabled. It adds:
 
 - the mobile menu, and the reading-progress bar under the header;
-- the pinned scroll sequence on the home hero (falls back to a static hero without JS
-  or under `prefers-reduced-motion`);
+- the pinned scroll sequence on the home hero — which opens on a composed frame (a
+  dimmed blurred field of the same picture, a pool of light, a hairline border and a
+  plate caption) that clears within the first 15% of the scroll, leaving the original
+  choreography untouched; falls back to a static hero without JS or under
+  `prefers-reduced-motion`;
 - scroll reveals, with a failsafe sweep so nothing is ever stranded invisible;
 - the expanding sector accordion on the home page (see below);
 - the presentation overlay — 12 slides, autoplay, arrow keys, Space to pause,

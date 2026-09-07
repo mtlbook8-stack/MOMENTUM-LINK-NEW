@@ -418,7 +418,18 @@ def build_home():
   <main id="main">
     <section class="stage" data-stage aria-label="Introduction">
       <div class="stage__pin">
-        {layer_img('31-technology-complexity-to-clarity', 'From complexity to a clear system', SIZES['full'], cls='stage__l1', eager=True, attrs='data-stage-l1')}
+        <div class="stage__backdrop" data-stage-backdrop aria-hidden="true">
+          {layer_img('31-technology-complexity-to-clarity', '', SIZES['full'], eager=True)}
+        </div>
+        <div class="stage__glow" data-stage-glow aria-hidden="true"></div>
+        <div class="stage__frame" data-stage-frame aria-hidden="true"></div>
+
+        {layer_img('31-technology-complexity-to-clarity', 'From complexity to a clear system', SIZES['full'], eager=True, cls='stage__l1', attrs='data-stage-l1')}
+
+        <div class="stage__intro" data-stage-intro aria-hidden="true">
+          <p class="stage__plate">Plate 01</p>
+          <p class="stage__caption">From complexity to a clear system</p>
+        </div>
 
         <div class="stage__l2" data-stage-l2 aria-hidden="true">
           {layer_img('30-technology-connected-ecosystem', '', SIZES['full'], eager=True)}
