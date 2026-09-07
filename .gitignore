@@ -1,0 +1,8 @@
+# The original canvas export and its 89 MB of source PNGs. The deployable
+# images in site/media are generated from these by build-media.py and are
+# committed; the originals stay local.
+src/
+
+# OS noise
+Thumbs.db
+.DS_Store
