@@ -800,17 +800,22 @@ a:hover { color: var(--rust); }
 }
 
 .process__rail {
+  /* Runs the full height of the viewport, so the whole process stays in view
+     as a column of miniatures while you read down the steps. */
   position: sticky;
-  top: calc(var(--header-h) + 52px);
+  top: var(--header-h);
+  height: calc(100vh - var(--header-h));
   align-self: start;
-  padding-left: 14px;
+  display: flex;
+  flex-direction: column;
+  padding: 26px 0 26px 14px;
 }
 /* The rail's spine, with the travelled portion drawn over it. */
 .process__track {
   position: absolute;
   left: 0;
-  top: 6px;
-  bottom: 6px;
+  top: 26px;
+  bottom: 26px;
   width: 1px;
   background: var(--rule-strong);
 }
@@ -825,46 +830,86 @@ a:hover { color: var(--rust); }
   transition: transform .18s linear;
 }
 
-.process__points { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 26px; }
+.process__points {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 0;
+}
+
+/* Each step is a small panel that physically grows as you reach it and
+   collapses again as you pass — the same ratio and easing as the sector rail. */
+.process__item {
+  flex: 1;
+  min-height: 46px;
+  display: flex;
+  transition: flex .8s var(--ease-expo);
+}
+.process__item.is-current { flex: 3.2; }
+
 .process__point {
   position: relative;
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-  padding-left: 20px;
-  color: var(--sand);
-  transition: color .3s ease;
+  flex: 1;
+  overflow: hidden;
+  border-radius: 3px;
+  background: var(--ink);
+  display: block;
+  color: var(--cream);
 }
-.process__point:hover { color: var(--ink); }
-.process__dot {
+.process__thumb { position: absolute; inset: 0; }
+.process__thumb img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  opacity: .38;
+  transform: scale(1.12);
+  transition: opacity .6s ease, transform 1.2s var(--ease-expo);
+}
+.process__point::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(8, 22, 31, .92) 10%, rgba(8, 22, 31, .34) 70%);
+}
+.process__item.is-done .process__thumb img { opacity: .5; }
+/* When a step opens, its miniature clears out of the rail — the picture is
+   now the panel alongside, so it is never shown in two places at once. */
+.process__item.is-current .process__thumb img { opacity: 0; transform: scale(1.35); }
+.process__item.is-current .process__point {
+  background: var(--ink-deep);
+  box-shadow: inset 0 0 0 1px rgba(74, 155, 232, .45);
+}
+.process__item.is-current .process__point::after { opacity: .35; }
+
+.process__meta {
   position: absolute;
-  left: -5px;
-  top: 6px;
-  width: 9px; height: 9px;
-  border-radius: 50%;
-  background: var(--cream);
-  border: 1px solid var(--rule-strong);
-  transition: background .35s ease, border-color .35s ease, transform .45s var(--ease-expo);
+  left: 12px; right: 12px; bottom: 10px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
 }
 .process__num {
   font-family: var(--mono);
-  font-size: 10.5px;
-  letter-spacing: .18em;
+  font-size: 10px;
+  letter-spacing: .2em;
+  color: rgba(242, 239, 232, .62);
+  transition: color .35s ease;
 }
 .process__label {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 10.5px;
   letter-spacing: .12em;
   text-transform: uppercase;
+  color: var(--cream);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity .45s ease, transform .55s var(--ease-expo);
 }
-.process__point.is-done { color: var(--slate); }
-.process__point.is-done .process__dot { background: var(--blue-dark); border-color: var(--blue-dark); }
-.process__point.is-current { color: var(--ink); }
-.process__point.is-current .process__dot {
-  background: var(--blue-dark);
-  border-color: var(--blue-dark);
-  transform: scale(1.7);
-}
+.process__item.is-current .process__num { color: var(--blue-light); }
+.process__item.is-current .process__label { opacity: 1; transform: none; }
 
 .process__steps { display: flex; flex-direction: column; gap: 96px; }
 
@@ -898,8 +943,8 @@ a:hover { color: var(--rust); }
 /* Collapsed toward the rail until the step is the one being read. */
 .js .step__inner {
   opacity: 0;
-  transform: translateX(-30px) scale(.95);
-  transition: opacity .65s ease, transform .85s var(--ease-expo);
+  transform: translateX(-72px) scale(.72);
+  transition: opacity .6s ease, transform .9s var(--ease-expo);
 }
 .js .step.is-active .step__inner { opacity: 1; transform: none; }
 
@@ -909,26 +954,36 @@ a:hover { color: var(--rust); }
 }
 
 @media (max-width: 900px) {
-  /* The rail turns into a compact strip that stays under the header. */
-  .process { grid-template-columns: minmax(0, 1fr); gap: 26px; padding-bottom: 72px; }
+  /* The rail lies down: the same miniatures, expanding sideways instead. */
+  .process { grid-template-columns: minmax(0, 1fr); gap: 24px; padding-bottom: 72px; }
   .process__rail {
     top: var(--header-h);
-    padding: 12px 0;
+    height: auto;
+    flex-direction: row;
+    padding: 10px 0 14px;
     margin: 0 calc(var(--gutter) * -1);
     padding-inline: var(--gutter);
     background: var(--cream);
     border-bottom: 1px solid var(--rule-strong);
     z-index: 20;
   }
-  .process__track { left: var(--gutter); right: var(--gutter); top: auto; bottom: 6px; width: auto; height: 1px; }
+  .process__track {
+    left: var(--gutter);
+    right: var(--gutter);
+    top: auto;
+    bottom: 6px;
+    width: auto;
+    height: 1px;
+  }
   .process__fill { width: 100%; height: 1px; transform: scaleX(0); transform-origin: left; }
-  .process__points { flex-direction: row; gap: 0; justify-content: space-between; }
-  .process__point { flex-direction: column; align-items: center; gap: 4px; padding: 0 0 14px; }
-  .process__dot { left: 50%; top: auto; bottom: 2px; margin-left: -4.5px; }
-  .process__label { display: none; }
-  .process__point.is-current .process__label { display: block; }
+  .process__points { flex-direction: row; height: 74px; }
+  .process__item { min-height: 0; min-width: 30px; }
+  .process__meta { left: 8px; right: 8px; bottom: 7px; }
+  .process__label { font-size: 9.5px; letter-spacing: .1em; }
   .process__steps { gap: 56px; }
-  .js .step__inner { transform: translateY(24px) scale(.97); }
+  /* The rail sits above on a phone, so the panel zooms down out of it. */
+  .step__inner { transform-origin: top center; }
+  .js .step__inner { transform: translateY(-34px) scale(.8); }
 }
 
 /* ── Sector sections (industries page) ────────────────────────────────── */

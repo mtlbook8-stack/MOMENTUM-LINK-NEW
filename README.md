@@ -137,14 +137,18 @@ Keyboard focus expands a panel on both. Styles live under *Sector panels* in
 
 ## The practice as a process
 
-The six steps read as a journey rather than a list. A road-map rail sits beside them,
-sticky while you scroll: a spine with six points, the travelled portion drawn in, the
-step you are reading marked, and the ones behind you filled. Each step's panel expands
-out of its point on the way in (`transform-origin: left`, so it unfolds from the rail)
-and folds back to it on the way out. Clicking a point jumps to that step.
+The six steps read as a journey. A road map runs the full height of the viewport
+beside them, sticky while you scroll: all six steps shown as small panels, with a
+spine line marking how far you have travelled.
 
-On a phone the rail rotates into a compact strip pinned under the header — same six
-points, same progress, with the current step's label shown.
+The rail behaves like the sector accordion, turned into navigation — the step you are
+reading physically expands (3.2 : 1 against the collapsed ones, same expo easing)
+while the others shrink back. Its miniature clears out of the rail as it opens, and
+the step's panel zooms out of that emptied slot into the column alongside, so the
+picture is never shown in two places at once. Clicking a step jumps to it.
+
+On a phone the rail lies down into a strip pinned under the header — the same
+miniatures expanding sideways, and panels zooming down out of it instead of sideways.
 
 Activation is computed in the shared scroll pass (`initProcess()` in `site.js`) rather
 than from an observer, so a step is never left collapsed and unreadable if callbacks

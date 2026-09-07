@@ -509,11 +509,13 @@ def build_practice():
     steps = ""
     for i, p in enumerate(PRACTICE):
         points += f"""
-          <li class="process__item">
-            <a class="process__point" href="#step-{p['num']}" data-process-point="{i}">
-              <span class="process__dot" aria-hidden="true"></span>
-              <span class="process__num">{p['num']}</span>
-              <span class="process__label">{e(p['label'])}</span>
+          <li class="process__item" data-process-point="{i}">
+            <a class="process__point" href="#step-{p['num']}">
+              <span class="process__thumb">{picture(p['stem'], "", "220px")}</span>
+              <span class="process__meta">
+                <span class="process__num">{p['num']}</span>
+                <span class="process__label">{e(p['label'])}</span>
+              </span>
             </a>
           </li>"""
 
