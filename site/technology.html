@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300&amp;family=IBM+Plex+Sans:wght@300;400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/site.css">
+  <link rel="stylesheet" href="assets/css/site.css?v=4a087864">
   <script>document.documentElement.className = document.documentElement.className.replace("no-js", "js");</script>
 </head>
 <body>
@@ -61,8 +61,20 @@
       <p class="lede">Seventeen disciplines we build and maintain in-house. None of them is a product pitch — each exists because a client operation needed it to work properly.</p>
     </section>
 
-    <section class="card-section shell" style="padding-top:0" aria-label="Technology disciplines">
-      <div class="card-grid card-grid--tech">
+    <section class="card-section shell" style="padding-top:0" aria-label="Technology disciplines" data-deck-section>
+      <div class="deck-bar" data-deck-bar hidden>
+        <p class="deck-count"><b data-deck-index>01</b> / 17 &middot; <span data-deck-title></span></p>
+        <div class="deck-actions">
+          <span class="deck-nav" data-deck-nav>
+            <button class="deck-btn" type="button" data-deck-auto aria-pressed="true" hidden>&#10073;&#10073; Pause</button>
+            <button class="deck-btn" type="button" data-deck-prev aria-label="Previous card">&larr;</button>
+            <button class="deck-btn" type="button" data-deck-next aria-label="Next card">&rarr;</button>
+          </span>
+          <button class="deck-btn deck-btn--primary" type="button" data-deck-toggle>See all 17</button>
+        </div>
+      </div>
+
+      <div class="card-grid card-grid--tech" data-deck>
         <figure class="card card--tech" data-card data-reveal>
           <picture><source type="image/webp" srcset="media/19-technology-api-integration-768.webp 768w, media/19-technology-api-integration.webp 1536w" sizes="(max-width: 560px) 100vw, (max-width: 1240px) 34vw, 410px"><img src="media/19-technology-api-integration.jpg" srcset="media/19-technology-api-integration-768.jpg 768w, media/19-technology-api-integration.jpg 1536w" sizes="(max-width: 560px) 100vw, (max-width: 1240px) 34vw, 410px" alt="API Integration" width="1536" height="1024" loading="lazy" decoding="async"></picture>
           <figcaption>
@@ -183,6 +195,9 @@
           </figcaption>
         </figure>
       </div>
+
+      <p class="deck-hint" data-deck-hint hidden>Shuffles on its own &middot; click or swipe to take over</p>
+      <p class="deck-live visually-hidden" data-deck-live role="status" aria-live="polite"></p>
     </section>
   </main>
 
@@ -211,6 +226,6 @@
     </div>
   </footer>
 
-  <script src="assets/js/site.js" defer></script>
+  <script src="assets/js/site.js?v=ff0f3212" defer></script>
 </body>
 </html>

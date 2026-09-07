@@ -135,6 +135,26 @@ Ratio, easing, duration and counter-scale are shared; the mobile rules in the
 Keyboard focus expands a panel on both. Styles live under *Sector panels* in
 `site.css`; the trigger logic is `initPanels()` in `site.js`.
 
+## The technology deck
+
+The seventeen disciplines are a deck of cards rather than a grid of equal squares.
+One card faces up; the stack fans behind it. Every change riffles the whole deck —
+the top nine cards spread into an arc wide enough to read several faces at once,
+hold for a beat, then collapse back with the next card on top (five cards on a
+phone, sized from the deck's own width so the spread never pushes the page sideways).
+
+- **Left alone it deals itself**, advancing every 4.2s.
+- **It holds still whenever someone is reading**: on hover, on keyboard focus, when
+  scrolled out of view, on a background tab, or when paused with the Pause button.
+- **Click, swipe or ← →** to take it over; the idle countdown restarts after each one.
+- **"See all 17"** drops back to the plain grid — which is also exactly what someone
+  with JavaScript disabled gets, so no card is ever unreachable.
+- Under `prefers-reduced-motion` the fan and the auto-advance are both skipped; the
+  deck still works, it just cuts straight to the next card.
+
+Geometry and timings are `fanGeometry()` / `shuffle()` in `initDeck()` (`site.js`);
+the styles are under *Card deck* in `site.css`.
+
 ## Images
 
 The source PNGs were 92.7 MB. `build-media.py` regenerates the `site/media` folder as

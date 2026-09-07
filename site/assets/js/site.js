@@ -212,6 +212,294 @@
     });
   }
 
+  /* ── Card deck (technology page) ───────────────────────────────────────
+     The page ships a plain grid. Here it becomes a stack shuffled one card
+     at a time; "See all" returns the grid, which is also what anyone
+     without JavaScript gets.
+     -------------------------------------------------------------------- */
+
+  var DECK_VISIBLE = 4;    // cards whose edges are drawn behind the front one
+  var DECK_FLICK_MS = 430;
+  var DECK_IDLE_MS = 4200; // sit still this long and the deck deals itself
+
+  function initDeck() {
+    var section = $("[data-deck-section]");
+    if (!section) return;
+
+    var deck = $("[data-deck]", section);
+    var cards = deck ? $$(".card", deck) : [];
+    if (!deck || cards.length < 2) return;
+
+    var bar = $("[data-deck-bar]", section);
+    var hint = $("[data-deck-hint]", section);
+    var indexEl = $("[data-deck-index]", section);
+    var titleEl = $("[data-deck-title]", section);
+    var liveEl = $("[data-deck-live]", section);
+    var toggle = $("[data-deck-toggle]", section);
+    var nav = $("[data-deck-nav]", section);
+
+    var autoBtn = $("[data-deck-auto]", section);
+
+    var order = cards.map(function (_, i) { return i; });
+    var isDeck = true;
+    var busy = false;
+
+    // Auto-shuffle state. The deck deals itself while it is left alone, and
+    // holds still whenever someone is actually looking at a card: hovering,
+    // focused, scrolled away, on another tab, or paused outright.
+    var autoOn = !reduced;
+    var idleTimer = null;
+    var hovering = false;
+    var inView = true;
+
+    function autoAllowed() {
+      return autoOn && isDeck && inView && !hovering && !reduced && !document.hidden;
+    }
+
+    function restartIdle() {
+      window.clearTimeout(idleTimer);
+      if (autoAllowed()) idleTimer = window.setTimeout(function () { next(); }, DECK_IDLE_MS);
+    }
+
+    function depthTransform(depth) {
+      // Each card sits lower, smaller and slightly turned, so the stack reads
+      // as a fanned hand rather than a single flat rectangle.
+      var drop = depth * 15;
+      var slide = depth * 6;
+      var scale = 1 - depth * 0.045;
+      var tilt = (depth % 2 ? 1 : -1) * depth * 1.9;
+      return "translate3d(" + slide + "px," + drop + "px,0) scale(" + scale + ") rotate(" + tilt + "deg)";
+    }
+
+    function render() {
+      order.forEach(function (cardIndex, depth) {
+        var el = cards[cardIndex];
+        var buried = depth > DECK_VISIBLE;
+        el.classList.toggle("is-front", depth === 0);
+        el.style.zIndex = String(cards.length - depth);
+        el.style.transform = depthTransform(Math.min(depth, DECK_VISIBLE + 1));
+        el.style.opacity = buried ? "0" : String(1 - depth * 0.08);
+        el.style.pointerEvents = depth === 0 ? "" : "none";
+      });
+
+      // Where the hover lift should settle, given the front card's resting pose.
+      deck.style.setProperty("--front-hover", "translate3d(0,-10px,0) scale(1.012)");
+
+      var front = order[0];
+      var title = cards[front].querySelector(".card__title");
+      var label = title ? title.textContent.trim() : "";
+      if (indexEl) indexEl.textContent = String(front + 1).padStart(2, "0");
+      if (titleEl) titleEl.textContent = label;
+      if (liveEl) liveEl.textContent = "Card " + (front + 1) + " of " + cards.length + ": " + label;
+    }
+
+    /*
+       Every change riffles the whole deck rather than sliding one card off:
+       the top cards fan out wide enough to read several faces at once, then
+       collapse back into the stack with the next card on top.
+    */
+    var FAN_OUT_MS = 250;   // how long the spread takes to open
+    var FAN_HOLD_MS = 90;   // beat at full spread
+    var FAN_IN_MS = 400;    // and to collapse again
+
+    /*
+       Fan geometry is derived from the deck's own width: the cards shrink and
+       step outwards by a fraction of it, so the spread reaches roughly 62% of
+       the deck's half-width either side and never pushes the page sideways,
+       whether the deck is 620px on a desktop or 335px on a phone.
+    */
+    function fanGeometry() {
+      var width = deck.getBoundingClientRect().width || 620;
+      var count = width < 420 ? 5 : width < 560 ? 7 : 9;
+      var scale = width < 420 ? 0.5 : 0.56;
+      var mid = (count - 1) / 2;
+      var step = mid ? width * (0.58 - scale / 2) / mid : 0;
+      return { count: Math.min(count, cards.length), scale: scale, step: step, mid: mid };
+    }
+
+    function fanTransform(slot, geo, dir) {
+      var off = slot - (geo.count - 1) / 2;
+      var flip = dir < 0 ? -1 : 1;
+      var x = off * geo.step * flip;
+      var y = Math.abs(off) * 10 - 14;
+      var rot = off * 8 * flip;
+      return "translate3d(" + x + "px," + y + "px,0) rotate(" + rot + "deg) scale(" + (geo.scale - Math.abs(off) * 0.012) + ")";
+    }
+
+    function shuffle(dir) {
+      if (busy || !isDeck) return;
+      busy = true;
+
+      function reorder() {
+        if (dir < 0) order.unshift(order.pop());
+        else order.push(order.shift());
+      }
+
+      if (reduced) {          // no spread, just the new card
+        reorder();
+        render();
+        busy = false;
+        restartIdle();
+        return;
+      }
+
+      deck.classList.add("is-shuffling");
+      var geo = fanGeometry();
+      var spread = order.slice(0, geo.count);
+
+      // Open the fan, rippling outwards from the top card.
+      spread.forEach(function (cardIndex, slot) {
+        var el = cards[cardIndex];
+        el.style.transition = "transform " + FAN_OUT_MS + "ms cubic-bezier(.3,.85,.35,1), opacity 160ms ease";
+        el.style.transitionDelay = (slot * 16) + "ms";
+        el.style.transform = fanTransform(slot, geo, dir);
+        el.style.opacity = "1";      // every fanned card shows its face
+        el.style.zIndex = String(cards.length - slot);
+      });
+
+      window.setTimeout(function () {
+        reorder();
+        // Collapse: render() puts each card back at its new depth.
+        spread.forEach(function (cardIndex, slot) {
+          var el = cards[cardIndex];
+          el.style.transition = "transform " + FAN_IN_MS + "ms var(--ease-expo), opacity 260ms ease";
+          el.style.transitionDelay = ((spread.length - slot) * 12) + "ms";
+        });
+        render();
+
+        window.setTimeout(function () {
+          cards.forEach(function (el) {
+            el.style.transition = "";
+            el.style.transitionDelay = "";
+          });
+          deck.classList.remove("is-shuffling");
+          busy = false;
+          restartIdle();
+        }, FAN_IN_MS + spread.length * 12 + 40);
+      }, FAN_OUT_MS + spread.length * 16 + FAN_HOLD_MS);
+    }
+
+    function next() { shuffle(1); }
+    function prev() { shuffle(-1); }
+
+    function clearDeckStyles() {
+      cards.forEach(function (el) {
+        el.classList.remove("is-front", "is-leaving");
+        el.style.transform = "";
+        el.style.opacity = "";
+        el.style.zIndex = "";
+        el.style.transition = "";
+        el.style.transitionDelay = "";
+        el.style.pointerEvents = "";
+      });
+    }
+
+    function setMode(on) {
+      isDeck = on;
+      deck.classList.toggle("is-deck", on);
+      clearDeckStyles();
+      if (nav) nav.hidden = !on;
+      if (hint) hint.hidden = !on;
+      toggle.textContent = on ? "See all " + cards.length : "Back to the deck";
+      if (on) {
+        deck.setAttribute("tabindex", "0");
+        deck.setAttribute("role", "group");
+        deck.setAttribute("aria-label", "Deck of " + cards.length + " technology cards");
+        // The deck drives opacity itself; take the cards off the reveal path.
+        cards.forEach(function (el) {
+          el.classList.remove("is-collapsible");
+          el.classList.add("is-visible");
+        });
+        render();
+      } else {
+        deck.removeAttribute("tabindex");
+        deck.removeAttribute("role");
+        deck.removeAttribute("aria-label");
+        // Back in the grid, blurbs go back to opening on hover.
+        if (finePointer && !reduced) {
+          cards.forEach(function (el) { el.classList.add("is-collapsible"); });
+        }
+      }
+    }
+
+    // Deal the stack in rather than having it appear fully formed.
+    function deal() {
+      cards.forEach(function (el, i) {
+        el.style.transition = "none";
+        el.style.opacity = "0";
+        el.style.transform = "translate3d(0,-58px,0) scale(.92) rotate(-5deg)";
+        el.style.transitionDelay = Math.min(i * 55, 420) + "ms";
+      });
+      window.setTimeout(function () {
+        cards.forEach(function (el) { el.style.transition = ""; });
+        render();
+        window.setTimeout(function () {
+          cards.forEach(function (el) { el.style.transitionDelay = ""; });
+        }, 1100);
+      }, 60);
+    }
+
+    function setAuto(on) {
+      autoOn = on;
+      if (autoBtn) {
+        autoBtn.innerHTML = on ? "&#10073;&#10073; Pause" : "&#9654; Auto";
+        autoBtn.setAttribute("aria-pressed", on ? "true" : "false");
+      }
+      restartIdle();
+    }
+
+    // Reading a card should never be interrupted underneath the reader.
+    deck.addEventListener("pointerenter", function () { hovering = true; restartIdle(); });
+    deck.addEventListener("pointerleave", function () { hovering = false; restartIdle(); });
+    deck.addEventListener("focusin", function () { hovering = true; restartIdle(); });
+    deck.addEventListener("focusout", function () { hovering = false; restartIdle(); });
+
+    document.addEventListener("visibilitychange", restartIdle);
+
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(function (entries) {
+        inView = entries[0].isIntersecting;
+        restartIdle();
+      }, { threshold: 0.35 }).observe(deck);
+    }
+
+    if (autoBtn) {
+      autoBtn.hidden = reduced;   // never auto-advance under reduced motion
+      autoBtn.addEventListener("click", function () { setAuto(!autoOn); });
+    }
+
+    // Tap advances; a horizontal drag picks the direction.
+    var downX = null, downY = null;
+    deck.addEventListener("pointerdown", function (e) { downX = e.clientX; downY = e.clientY; });
+    deck.addEventListener("pointerup", function (e) {
+      if (downX === null) return;
+      var dx = e.clientX - downX;
+      var dy = e.clientY - downY;
+      downX = downY = null;
+      if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 24) return;   // a scroll, not a swipe
+      if (dx < -40) next();
+      else if (dx > 40) prev();
+      else next();
+      restartIdle();
+    });
+
+    deck.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowRight" || e.key === "Enter" || e.key === " " || e.key === "Spacebar") { e.preventDefault(); next(); }
+      else if (e.key === "ArrowLeft") { e.preventDefault(); prev(); }
+    });
+
+    var nextBtn = $("[data-deck-next]", section);
+    var prevBtn = $("[data-deck-prev]", section);
+    if (nextBtn) nextBtn.addEventListener("click", function () { next(); restartIdle(); });
+    if (prevBtn) prevBtn.addEventListener("click", function () { prev(); restartIdle(); });
+    toggle.addEventListener("click", function () { setMode(!isDeck); restartIdle(); });
+
+    if (bar) bar.hidden = false;
+    setMode(true);
+    setAuto(autoOn);
+    if (!reduced) deal();
+  }
+
   /* ── Presentation overlay ──────────────────────────────────────────── */
 
   var SLIDE_MS = 5600;
@@ -564,6 +852,7 @@
     initReveal();
     initCards();
     initPanels();
+    initDeck();
     initPresentation();
     initForm();
 

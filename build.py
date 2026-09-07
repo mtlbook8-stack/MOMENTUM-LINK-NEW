@@ -10,6 +10,7 @@ forty times. Run it after editing content:
 Output goes to ./site — the folder you deploy.
 """
 
+import hashlib
 import html
 import os
 
@@ -235,6 +236,16 @@ def layer_img(stem, alt, sizes, cls="", eager=False, attrs=""):
     )
 
 
+def asset_version(relpath):
+    """Short content hash, appended to asset URLs so a changed file is never
+    served from a stale cache after a deploy."""
+    try:
+        with open(os.path.join(OUT, relpath), "rb") as fh:
+            return hashlib.sha1(fh.read()).hexdigest()[:8]
+    except OSError:
+        return "dev"
+
+
 def head(title, description, page, extra=""):
     canonical = ""
     og_url = ""
@@ -267,7 +278,7 @@ def head(title, description, page, extra=""):
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300&amp;family=IBM+Plex+Sans:wght@300;400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/site.css">
+  <link rel="stylesheet" href="assets/css/site.css?v={asset_version("assets/css/site.css")}">
   <script>document.documentElement.className = document.documentElement.className.replace("no-js", "js");</script>
 {extra}</head>
 <body>
@@ -329,7 +340,7 @@ def footer():
     </div>
   </footer>
 
-  <script src="assets/js/site.js" defer></script>
+  <script src="assets/js/site.js?v={asset_version("assets/js/site.js")}" defer></script>
 </body>
 </html>
 """
@@ -565,6 +576,7 @@ def build_industries():
 
 
 def build_technology():
+    total = len(TECH)
     cards = ""
     for stem, title, blurb in TECH:
         cards += f"""
@@ -584,9 +596,24 @@ def build_technology():
       <p class="lede">Seventeen disciplines we build and maintain in-house. None of them is a product pitch — each exists because a client operation needed it to work properly.</p>
     </section>
 
-    <section class="card-section shell" style="padding-top:0" aria-label="Technology disciplines">
-      <div class="card-grid card-grid--tech">{cards}
+    <section class="card-section shell" style="padding-top:0" aria-label="Technology disciplines" data-deck-section>
+      <div class="deck-bar" data-deck-bar hidden>
+        <p class="deck-count"><b data-deck-index>01</b> / {total} &middot; <span data-deck-title></span></p>
+        <div class="deck-actions">
+          <span class="deck-nav" data-deck-nav>
+            <button class="deck-btn" type="button" data-deck-auto aria-pressed="true" hidden>&#10073;&#10073; Pause</button>
+            <button class="deck-btn" type="button" data-deck-prev aria-label="Previous card">&larr;</button>
+            <button class="deck-btn" type="button" data-deck-next aria-label="Next card">&rarr;</button>
+          </span>
+          <button class="deck-btn deck-btn--primary" type="button" data-deck-toggle>See all {total}</button>
+        </div>
       </div>
+
+      <div class="card-grid card-grid--tech" data-deck>{cards}
+      </div>
+
+      <p class="deck-hint" data-deck-hint hidden>Shuffles on its own &middot; click or swipe to take over</p>
+      <p class="deck-live visually-hidden" data-deck-live role="status" aria-live="polite"></p>
     </section>
   </main>
 """
