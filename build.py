@@ -39,6 +39,7 @@ PAGES = [
 PRACTICE = [
     {
         "num": "01",
+        "label": "Understand",
         "stem": "01-practice-understand-business-workflow",
         "title": "Learning how the business actually works",
         "short": "Weeks on site mapping the real path of an order, a job, or a tenancy.",
@@ -47,6 +48,7 @@ PRACTICE = [
     },
     {
         "num": "02",
+        "label": "Choose",
         "stem": "02-practice-select-right-foundation",
         "title": "Finding the right technological foundation",
         "short": "Platforms compared against your workflow, not a feature matrix.",
@@ -55,6 +57,7 @@ PRACTICE = [
     },
     {
         "num": "03",
+        "label": "Tailor",
         "stem": "03-practice-tailored-client-workspace",
         "title": "Tailoring a shared foundation to one client",
         "short": "A common base, configured until it reads like your own system.",
@@ -63,6 +66,7 @@ PRACTICE = [
     },
     {
         "num": "04",
+        "label": "Connect",
         "stem": "04-practice-existing-system-integration",
         "title": "Connecting with existing systems",
         "short": "Integration first. Replacement only where it is genuinely warranted.",
@@ -71,6 +75,7 @@ PRACTICE = [
     },
     {
         "num": "05",
+        "label": "Improve",
         "stem": "05-practice-continuous-enhancements",
         "title": "Delivering useful improvements continuously",
         "short": "Small, frequent releases measured against operational outcomes.",
@@ -79,6 +84,7 @@ PRACTICE = [
     },
     {
         "num": "06",
+        "label": "Maintain",
         "stem": "06-practice-long-term-technology-care",
         "title": "A long-term technology relationship",
         "short": "Version history, personalised care, and a team that stays.",
@@ -499,18 +505,30 @@ def build_home():
 
 
 def build_practice():
-    rows = ""
-    for p in PRACTICE:
-        rows += f"""
-      <article class="practice-row" data-reveal>
-        <div class="practice-row__media">{picture(p['stem'], p['title'], SIZES['half'])}</div>
-        <div class="practice-row__copy">
-          <p class="practice-row__num">{p['num']}</p>
-          <h2 class="practice-row__title">{e(p['title'])}</h2>
-          <p class="practice-row__body">{e(p['body'])}</p>
-          <p class="practice-row__deliverable">{e(p['deliverable'])}</p>
-        </div>
-      </article>"""
+    points = ""
+    steps = ""
+    for i, p in enumerate(PRACTICE):
+        points += f"""
+          <li class="process__item">
+            <a class="process__point" href="#step-{p['num']}" data-process-point="{i}">
+              <span class="process__dot" aria-hidden="true"></span>
+              <span class="process__num">{p['num']}</span>
+              <span class="process__label">{e(p['label'])}</span>
+            </a>
+          </li>"""
+
+        steps += f"""
+        <article class="step" id="step-{p['num']}" data-step>
+          <div class="step__inner">
+            <div class="step__media">{picture(p['stem'], p['title'], SIZES['half'])}</div>
+            <div class="step__copy">
+              <p class="step__num">{p['num']} &middot; {e(p['label'])}</p>
+              <h2 class="step__title">{e(p['title'])}</h2>
+              <p class="step__body">{e(p['body'])}</p>
+              <p class="step__deliverable">{e(p['deliverable'])}</p>
+            </div>
+          </div>
+        </article>"""
 
     body = f"""
   <main id="main">
@@ -520,8 +538,16 @@ def build_practice():
       <p class="lede">Nothing here is proprietary. It is simply the sequence that keeps a software programme honest — understand, choose, tailor, connect, improve, maintain.</p>
     </section>
 
-    <section class="practice-list shell">{rows}
-    </section>
+    <div class="process shell" data-process>
+      <nav class="process__rail" aria-label="The six steps">
+        <span class="process__track" aria-hidden="true"><span class="process__fill" data-process-fill></span></span>
+        <ol class="process__points">{points}
+        </ol>
+      </nav>
+
+      <div class="process__steps">{steps}
+      </div>
+    </div>
   </main>
 """
     return page(

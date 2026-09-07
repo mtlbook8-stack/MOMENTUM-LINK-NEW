@@ -212,6 +212,60 @@
     });
   }
 
+  /* ── Practice as a process ─────────────────────────────────────────────
+     The rail tracks how far through the six steps you are; each step's panel
+     expands out of its point on the way in and folds back to it on the way
+     out. Without JS every panel simply stays open.
+     -------------------------------------------------------------------- */
+
+  function initProcess() {
+    var process = $("[data-process]");
+    if (!process) return;
+
+    var steps = $$("[data-step]", process);
+    var points = $$("[data-process-point]", process);
+    var fill = $("[data-process-fill]", process);
+    if (!steps.length) return;
+
+    if (reduced) {
+      // No travelling animation to follow — show the whole process at once.
+      steps.forEach(function (el) { el.classList.add("is-active"); });
+      points.forEach(function (el) { el.classList.add("is-done"); });
+      return;
+    }
+
+    return function () {
+      var rect = process.getBoundingClientRect();
+      var mid = window.innerHeight * 0.42;
+
+      // How far the reader has travelled through the whole run of steps.
+      var travelled = clamp01((mid - rect.top) / (rect.height || 1));
+      if (fill) {
+        fill.style.transform = (window.innerWidth <= 900 ? "scaleX(" : "scaleY(") + travelled + ")";
+      }
+
+      // A step is open while it sits inside the reading band, and folds away
+      // again once it leaves. Driven from the scroll pass rather than an
+      // observer so a step is never left collapsed and unreadable.
+      var top = window.innerHeight * 0.9;
+      var bottom = window.innerHeight * 0.08;
+      var current = 0;
+      var best = Infinity;
+
+      steps.forEach(function (el, i) {
+        var box = el.getBoundingClientRect();
+        el.classList.toggle("is-active", box.top < top && box.bottom > bottom);
+        var distance = Math.abs(box.top + box.height / 2 - mid);
+        if (distance < best) { best = distance; current = i; }
+      });
+
+      points.forEach(function (el, i) {
+        el.classList.toggle("is-current", i === current);
+        el.classList.toggle("is-done", i < current);
+      });
+    };
+  }
+
   /* ── Card deck (technology page) ───────────────────────────────────────
      The page ships a plain grid. Here it becomes a stack shuffled one card
      at a time; "See all" returns the grid, which is also what anyone
@@ -258,7 +312,7 @@
 
     function restartIdle() {
       window.clearTimeout(idleTimer);
-      if (autoAllowed()) idleTimer = window.setTimeout(function () { next(); }, DECK_IDLE_MS);
+      if (autoAllowed()) idleTimer = window.setTimeout(function () { riffle(1); }, DECK_IDLE_MS);
     }
 
     function depthTransform(depth) {
@@ -326,7 +380,7 @@
       return "translate3d(" + x + "px," + y + "px,0) rotate(" + rot + "deg) scale(" + (geo.scale - Math.abs(off) * 0.012) + ")";
     }
 
-    function shuffle(dir) {
+    function riffle(dir) {
       if (busy || !isDeck) return;
       busy = true;
 
@@ -379,8 +433,46 @@
       }, FAN_OUT_MS + spread.length * 16 + FAN_HOLD_MS);
     }
 
-    function next() { shuffle(1); }
-    function prev() { shuffle(-1); }
+    /*
+       A manual move is a plain change of card — the full riffle is reserved
+       for the automatic tick, so taking control feels immediate rather than
+       replaying a flourish on every click.
+    */
+    var STEP_MS = 260;
+
+    function step(dir) {
+      if (busy || !isDeck) return;
+      busy = true;
+
+      function settle() {
+        window.setTimeout(function () { busy = false; restartIdle(); }, reduced ? 0 : STEP_MS);
+      }
+
+      if (reduced || dir < 0) {
+        if (dir < 0) order.unshift(order.pop());
+        else order.push(order.shift());
+        render();
+        settle();
+        return;
+      }
+
+      var leaving = cards[order[0]];
+      leaving.classList.add("is-leaving");
+      window.setTimeout(function () {
+        order.push(order.shift());
+        leaving.style.transition = "none";
+        leaving.classList.remove("is-leaving");
+        render();
+        window.setTimeout(function () {
+          leaving.style.transition = "";
+          busy = false;
+          restartIdle();
+        }, 30);
+      }, STEP_MS);
+    }
+
+    function next() { step(1); }
+    function prev() { step(-1); }
 
     function clearDeckStyles() {
       cards.forEach(function (el) {
@@ -859,7 +951,7 @@
     var year = $("[data-year]");
     if (year) year.textContent = new Date().getFullYear();
 
-    var handlers = [initProgress(), initStage()].filter(Boolean);
+    var handlers = [initProgress(), initStage(), initProcess()].filter(Boolean);
     if (!handlers.length) return;
 
     var ticking = false;

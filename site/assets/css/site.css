@@ -632,6 +632,13 @@ a:hover { color: var(--rust); }
    letting a wide fan push the page sideways. */
 [data-deck-section] { overflow-x: clip; }
 
+/* A manual move just flicks the top card away to the right. */
+.card-grid.is-deck .card.is-leaving {
+  transform: translate3d(116%, -6%, 0) rotate(12deg) scale(.94) !important;
+  opacity: 0 !important;
+  transition: transform .26s cubic-bezier(.4,.05,.6,1), opacity .26s ease !important;
+}
+
 /* Nothing is "behind" mid-riffle — every fanned card shows its face. */
 .card-grid.is-deck.is-shuffling .card figcaption { opacity: 0; }
 
@@ -779,55 +786,149 @@ a:hover { color: var(--rust); }
 .page-head { padding: 88px var(--gutter) 56px; }
 .page-head .display { font-size: clamp(34px, 5.2vw, 62px); max-width: 19ch; }
 
-/* ── Practice rows ────────────────────────────────────────────────────── */
+/* ── Practice as a process ────────────────────────────────────────────────
+   A sticky road-map rail on the left tracks progress through the six steps;
+   each step's content expands out of its point on the way in and collapses
+   back to it on the way out.
+   ------------------------------------------------------------------------ */
 
-.practice-list {
-  padding: 0 var(--gutter) 96px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-.practice-row {
+.process {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  background: var(--cream-panel);
-  border: 1px solid var(--rule);
+  grid-template-columns: 210px minmax(0, 1fr);
+  gap: 60px;
+  padding-bottom: 104px;
 }
-.practice-row__media { aspect-ratio: 3 / 2; overflow: hidden; background: var(--rule); }
-.practice-row__media img {
-  width: 100%; height: 100%;
-  object-fit: cover;
-  transition: transform 1.6s var(--ease-out);
+
+.process__rail {
+  position: sticky;
+  top: calc(var(--header-h) + 52px);
+  align-self: start;
+  padding-left: 14px;
 }
-.practice-row:hover .practice-row__media img { transform: scale(1.06); }
-.practice-row__copy {
-  padding: clamp(28px, 3.4vw, 52px);
+/* The rail's spine, with the travelled portion drawn over it. */
+.process__track {
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 6px;
+  width: 1px;
+  background: var(--rule-strong);
+}
+.process__fill {
+  position: absolute;
+  left: 0; top: 0;
+  width: 1px;
+  height: 100%;
+  background: var(--blue-dark);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform .18s linear;
+}
+
+.process__points { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 26px; }
+.process__point {
+  position: relative;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 14px;
+  align-items: baseline;
+  gap: 10px;
+  padding-left: 20px;
+  color: var(--sand);
+  transition: color .3s ease;
 }
-.practice-row__num {
+.process__point:hover { color: var(--ink); }
+.process__dot {
+  position: absolute;
+  left: -5px;
+  top: 6px;
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--cream);
+  border: 1px solid var(--rule-strong);
+  transition: background .35s ease, border-color .35s ease, transform .45s var(--ease-expo);
+}
+.process__num {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: .18em;
+}
+.process__label {
   font-family: var(--mono);
   font-size: 11px;
-  letter-spacing: .2em;
-  color: var(--blue-dark);
+  letter-spacing: .12em;
+  text-transform: uppercase;
 }
-.practice-row__title {
+.process__point.is-done { color: var(--slate); }
+.process__point.is-done .process__dot { background: var(--blue-dark); border-color: var(--blue-dark); }
+.process__point.is-current { color: var(--ink); }
+.process__point.is-current .process__dot {
+  background: var(--blue-dark);
+  border-color: var(--blue-dark);
+  transform: scale(1.7);
+}
+
+.process__steps { display: flex; flex-direction: column; gap: 96px; }
+
+.step { scroll-margin-top: calc(var(--header-h) + 40px); }
+.step__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 26px;
+  background: var(--cream-panel);
+  border: 1px solid var(--rule);
+  padding: clamp(22px, 2.4vw, 34px);
+  /* Growth starts at the rail edge, so the panel unfolds out of its point. */
+  transform-origin: left center;
+}
+.step__media { aspect-ratio: 16 / 9; overflow: hidden; background: var(--rule); }
+.step__media img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.6s var(--ease-out); }
+.step:hover .step__media img { transform: scale(1.05); }
+.step__copy { display: flex; flex-direction: column; gap: 13px; }
+.step__num { font-family: var(--mono); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--blue-dark); margin: 0; }
+.step__title {
   font-family: var(--serif);
   font-weight: 400;
-  font-size: clamp(24px, 2.6vw, 32px);
-  line-height: 1.15;
+  font-size: clamp(24px, 2.7vw, 34px);
+  line-height: 1.14;
   letter-spacing: -.012em;
   margin: 0;
 }
-.practice-row__body { font-size: 16px; line-height: 1.66; color: var(--slate-dark); margin: 0; }
-.practice-row__deliverable {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--sand);
-  letter-spacing: .06em;
-  margin-top: 6px;
+.step__body { font-size: 16.5px; line-height: 1.68; color: var(--slate-dark); margin: 0; }
+.step__deliverable { font-family: var(--mono); font-size: 11px; color: var(--sand); letter-spacing: .06em; margin: 4px 0 0; }
+
+/* Collapsed toward the rail until the step is the one being read. */
+.js .step__inner {
+  opacity: 0;
+  transform: translateX(-30px) scale(.95);
+  transition: opacity .65s ease, transform .85s var(--ease-expo);
+}
+.js .step.is-active .step__inner { opacity: 1; transform: none; }
+
+@media (min-width: 900px) {
+  .step__inner { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 34px; align-items: center; }
+  .step__media { aspect-ratio: 4 / 3; }
+}
+
+@media (max-width: 900px) {
+  /* The rail turns into a compact strip that stays under the header. */
+  .process { grid-template-columns: minmax(0, 1fr); gap: 26px; padding-bottom: 72px; }
+  .process__rail {
+    top: var(--header-h);
+    padding: 12px 0;
+    margin: 0 calc(var(--gutter) * -1);
+    padding-inline: var(--gutter);
+    background: var(--cream);
+    border-bottom: 1px solid var(--rule-strong);
+    z-index: 20;
+  }
+  .process__track { left: var(--gutter); right: var(--gutter); top: auto; bottom: 6px; width: auto; height: 1px; }
+  .process__fill { width: 100%; height: 1px; transform: scaleX(0); transform-origin: left; }
+  .process__points { flex-direction: row; gap: 0; justify-content: space-between; }
+  .process__point { flex-direction: column; align-items: center; gap: 4px; padding: 0 0 14px; }
+  .process__dot { left: 50%; top: auto; bottom: 2px; margin-left: -4.5px; }
+  .process__label { display: none; }
+  .process__point.is-current .process__label { display: block; }
+  .process__steps { gap: 56px; }
+  .js .step__inner { transform: translateY(24px) scale(.97); }
 }
 
 /* ── Sector sections (industries page) ────────────────────────────────── */

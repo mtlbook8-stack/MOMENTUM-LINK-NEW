@@ -135,10 +135,25 @@ Ratio, easing, duration and counter-scale are shared; the mobile rules in the
 Keyboard focus expands a panel on both. Styles live under *Sector panels* in
 `site.css`; the trigger logic is `initPanels()` in `site.js`.
 
+## The practice as a process
+
+The six steps read as a journey rather than a list. A road-map rail sits beside them,
+sticky while you scroll: a spine with six points, the travelled portion drawn in, the
+step you are reading marked, and the ones behind you filled. Each step's panel expands
+out of its point on the way in (`transform-origin: left`, so it unfolds from the rail)
+and folds back to it on the way out. Clicking a point jumps to that step.
+
+On a phone the rail rotates into a compact strip pinned under the header — same six
+points, same progress, with the current step's label shown.
+
+Activation is computed in the shared scroll pass (`initProcess()` in `site.js`) rather
+than from an observer, so a step is never left collapsed and unreadable if callbacks
+are throttled. Under `prefers-reduced-motion` every panel is simply open.
+
 ## The technology deck
 
 The seventeen disciplines are a deck of cards rather than a grid of equal squares.
-One card faces up; the stack fans behind it. Every change riffles the whole deck —
+One card faces up; the stack fans behind it. The automatic tick riffles the whole deck —
 the top nine cards spread into an arc wide enough to read several faces at once,
 hold for a beat, then collapse back with the next card on top (five cards on a
 phone, sized from the deck's own width so the spread never pushes the page sideways).
@@ -146,7 +161,9 @@ phone, sized from the deck's own width so the spread never pushes the page sidew
 - **Left alone it deals itself**, advancing every 4.2s.
 - **It holds still whenever someone is reading**: on hover, on keyboard focus, when
   scrolled out of view, on a background tab, or when paused with the Pause button.
-- **Click, swipe or ← →** to take it over; the idle countdown restarts after each one.
+- **Click, swipe or ← →** to take it over — a manual move is a plain, quick change of
+  card, with no fan; the flourish belongs to the automatic tick. The idle countdown
+  restarts after each one.
 - **"See all 17"** drops back to the plain grid — which is also exactly what someone
   with JavaScript disabled gets, so no card is ever unreachable.
 - Under `prefers-reduced-motion` the fan and the auto-advance are both skipped; the
