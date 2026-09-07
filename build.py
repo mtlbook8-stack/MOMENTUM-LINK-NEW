@@ -18,7 +18,7 @@ OUT = os.path.join(HERE, "site")
 
 # Set this to the live origin (no trailing slash) to emit absolute canonical
 # and Open Graph URLs; leave empty for relative-only output.
-BASE_URL = ""
+BASE_URL = "https://mtlbook8-stack.github.io/MOMENTUM-LINK-NEW"
 
 EMAIL_NEW = "hello@momentumlink.example"
 EMAIL_CARE = "care@momentumlink.example"

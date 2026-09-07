@@ -72,12 +72,30 @@ Forms, or your own handler). Fields sent: `name`, `organisation`, `sector`, `ema
 (`…@momentumlink.example`) and phone number in `build.py` are the design's placeholders,
 not real ones.
 
-## Before launch
+## Deployment
 
-- Set `BASE_URL` in `build.py` to the live origin (e.g. `https://momentumlink.com`) and
-  rebuild — this fills in canonical URLs, Open Graph URLs and `sitemap.xml`.
-- Replace the placeholder email addresses and phone number.
-- Point the contact form at a real endpoint.
+Live at **https://mtlbook8-stack.github.io/MOMENTUM-LINK-NEW/**
+
+Hosted on GitHub Pages from this repository. Pushing to `main` runs
+`.github/workflows/deploy.yml`, which uploads `site/` and publishes it — there is no
+manual publish step. To update the live site:
+
+```bash
+python build.py
+git add -A && git commit -m "Update content" && git push
+```
+
+The deploy takes about a minute; watch it under the repository's Actions tab.
+
+To move to a custom domain later, add the domain in the repository's Pages settings,
+set `BASE_URL` in `build.py` to it, and rebuild so the canonical URLs and sitemap follow.
+
+## Still to do before this is a real public site
+
+- Replace the placeholder email addresses (`…@momentumlink.example`) and the
+  `+1 (000) 000-0000` phone number — they came from the design and are not real.
+- Point the contact form at a real endpoint (see above); until then it falls back to
+  opening the visitor's email client.
 
 ## What the JavaScript does
 
@@ -127,8 +145,9 @@ WebP with JPEG fallbacks at two widths (1536 and 768); pages request the right s
 python build-media.py src/media site/media
 ```
 
-`src/` holds the original canvas export and its PNGs. It is not part of the deployed
-site — keep it if you want to re-encode the artwork later, delete it otherwise.
+`src/` holds the original canvas export and its PNGs. It is gitignored (89 MB), so it
+lives only in your local copy — keep it if you want to re-encode the artwork later. The
+generated `site/media` files are committed, so the repository alone is enough to deploy.
 
 ## Accessibility and SEO notes
 
