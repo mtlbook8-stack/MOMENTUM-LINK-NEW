@@ -203,7 +203,7 @@ the same palette and kept far enough back to read as paper rather than decoratio
 | Page | Ground |
 |---|---|
 | Home | Pools of light — the blue and rust washes the hero opens on |
-| Practice | Measured vertical rules, echoing the timeline |
+| Practice | Planning paper — a fine grid with a heavier rule every fifth cell, under a light gradient |
 | Industries | A drawing-board hatch |
 | Technology | A schematic dot grid |
 | Contact | A single wash falling off the dark hero |

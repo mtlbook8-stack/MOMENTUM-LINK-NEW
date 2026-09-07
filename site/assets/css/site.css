@@ -87,15 +87,19 @@ body[data-page="home"]::before {
   background-repeat: repeat, no-repeat, no-repeat, no-repeat;
 }
 
-/* Practice — measured vertical rules, echoing the timeline. */
+/* Practice — planning paper: a fine grid with a heavier rule every fifth
+   cell, under a light gradient falling from the top. */
 body[data-page="practice"]::before {
   background-image:
     var(--grain),
-    repeating-linear-gradient(90deg, rgba(16, 34, 47, .07) 0 1px, transparent 1px 108px),
-    radial-gradient(56vw 56vw at 88% 4%, rgba(74, 155, 232, .2), transparent 64%),
-    radial-gradient(48vw 48vw at 4% 92%, rgba(140, 127, 107, .18), transparent 62%);
-  background-size: 160px 160px, auto, auto, auto;
-  background-repeat: repeat, repeat, no-repeat, no-repeat;
+    repeating-linear-gradient(0deg, rgba(16, 34, 47, .04) 0 1px, transparent 1px 27px),
+    repeating-linear-gradient(90deg, rgba(16, 34, 47, .04) 0 1px, transparent 1px 27px),
+    repeating-linear-gradient(0deg, rgba(16, 34, 47, .065) 0 1px, transparent 1px 135px),
+    repeating-linear-gradient(90deg, rgba(16, 34, 47, .065) 0 1px, transparent 1px 135px),
+    linear-gradient(168deg, rgba(74, 155, 232, .22) 0%, rgba(74, 155, 232, .07) 34%, rgba(74, 155, 232, 0) 58%),
+    radial-gradient(54vw 54vw at 94% 92%, rgba(140, 127, 107, .2), transparent 62%);
+  background-size: 160px 160px, auto, auto, auto, auto, auto, auto;
+  background-repeat: repeat, repeat, repeat, repeat, repeat, no-repeat, no-repeat;
 }
 
 /* Industries — a drawing-board hatch. */
