@@ -60,8 +60,8 @@ PRACTICE = [
         "label": "Build",
         "stem": "23-technology-workflow-automation",
         "title": "Rapid build, tested and shipped",
-        "short": "Built quickly, on a pipeline that tests and deploys every change.",
-        "body": "The build moves fast because the pipeline carries the weight: automated testing and a short CI/CD workflow, so each change is verified and deployed without ceremony. That is what makes a quick feedback loop real rather than promised.",
+        "short": "Built quickly, deployed through CI/CD, and properly tested before it ships.",
+        "body": "The build moves fast because deployment is automated — a short CI/CD workflow puts each change in front of you without ceremony. Testing is not what gets cut for it: before a release goes out it goes through a comprehensive session, a good deal of it by hand, because that is what actually finds the things that matter.",
         "deliverable": "Deliverable — the working product, tested and deployed",
     },
     {
@@ -70,7 +70,7 @@ PRACTICE = [
         "stem": "05-practice-continuous-enhancements",
         "title": "Your feedback, for as many rounds as it takes",
         "short": "The real notes arrive after delivery. There is no limit on rounds.",
-        "body": "Once it is in your hands the useful feedback starts, and it rarely arrives all at once. We keep iterating for as many rounds as it takes — the count is not capped, and asking for another pass is expected rather than an imposition.",
+        "body": "Once it is in your hands the useful feedback starts, and it rarely arrives all at once. We keep iterating for as many rounds as it takes — the count is not capped, and asking for another pass is expected rather than an imposition. Automated tests run on every update through the iteration, so a change made for this round does not quietly break something that worked in the last.",
         "deliverable": "Deliverable — a release for every round of feedback",
     },
     {
