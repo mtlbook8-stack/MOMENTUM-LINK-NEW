@@ -21,10 +21,10 @@ OUT = os.path.join(HERE, "site")
 # and Open Graph URLs; leave empty for relative-only output.
 BASE_URL = "https://mtlbook8-stack.github.io/MOMENTUM-LINK-NEW"
 
-EMAIL_NEW = "hello@momentumlink.example"
-EMAIL_CARE = "care@momentumlink.example"
-PHONE = "+1 (000) 000-0000"
-PHONE_HREF = "+10000000000"
+EMAIL_NEW = "hello@momentumlink.com"
+EMAIL_CARE = "hello@momentumlink.com"
+PHONE = "(347) 342-1302"
+PHONE_HREF = "+13473421302"
 
 # ── Content ───────────────────────────────────────────────────────────────
 
@@ -183,9 +183,8 @@ STATS = [
 ]
 
 CONTACTS = [
-    ("New engagements", EMAIL_NEW, "mailto:" + EMAIL_NEW, "Send the operation, not the requirements document."),
-    ("Existing clients", EMAIL_CARE, "mailto:" + EMAIL_CARE, "Care team, monitored during your working hours."),
-    ("Office", PHONE, "tel:" + PHONE_HREF, "Weekdays, 08:00 – 18:00."),
+    ("Email", EMAIL_NEW, "mailto:" + EMAIL_NEW, "Tell us about your business. We will handle the technology."),
+    ("Phone", PHONE, "tel:" + PHONE_HREF, "Speak to us directly."),
 ]
 
 FIELDS = [
