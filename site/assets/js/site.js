@@ -643,7 +643,7 @@
 
   var SLIDES = [
     ["31-technology-complexity-to-clarity", "From complexity to a clear system", "Most operations do not need more software. They need the software they already have to make sense together."],
-    ["01-practice-understand-business-workflow", "We start on the floor, not in a demo", "Weeks spent tracing the real path of an order, a job, or a tenancy — including every exception that happens often enough to be the rule."],
+    ["03-practice-tailored-client-workspace", "A demo before a specification", "We show what we understood as something working, take your notes on it, and only start building once you agree it is right."],
     ["07-industry-smart-manufacturing", "Manufacturing", "Production monitoring, scheduling, and true product cost answering to one set of numbers."],
     ["09-industry-construction-project-management", "Construction", "Preconstruction through final billing, with the change orders that decide whether a job made money."],
     ["11-industry-wholesale-distribution", "Wholesale distribution", "Ordering, fulfilment, inventory and both sides of the ledger at transaction density."],
@@ -653,7 +653,7 @@
     ["27-technology-digital-twin", "Test the change before you commit", "Simulation of an operational change, run against real data, before a single process is disturbed."],
     ["34-technology-secure-data-journey", "Secure from capture to report", "Encrypted, auditable movement of every record, with identity-first access at each hop."],
     ["30-technology-connected-ecosystem", "One network, many sites", "Plants, depots, offices and storefronts operating as a single connected system."],
-    ["06-practice-long-term-technology-care", "Then we stay", "Version history kept, improvements delivered continuously, accountability years after go-live."]
+    ["06-practice-long-term-technology-care", "Handed over — or kept moving", "Complete products are handed over in full. The ones that keep moving, we stay with, for as long as the product warrants it."]
   ].map(function (s, i) {
     return {
       stem: s[0],

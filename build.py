@@ -39,57 +39,57 @@ PAGES = [
 PRACTICE = [
     {
         "num": "01",
-        "label": "Understand",
+        "label": "Meet",
         "stem": "01-practice-understand-business-workflow",
-        "title": "Learning how the business actually works",
-        "short": "Weeks on site mapping the real path of an order, a job, or a tenancy.",
-        "body": "Before a single platform is named, we trace the operation end to end — who approves what, where the spreadsheet workarounds live, and which exceptions happen often enough to be the rule. The wall of process cards is the deliverable nobody expects and everybody keeps.",
-        "deliverable": "Deliverable — operating map and exception register",
+        "title": "A meeting, or a few",
+        "short": "One or two conversations to establish what the project actually needs.",
+        "body": "We do not open with a discovery programme. A meeting — sometimes a few — is usually enough to establish what the product has to do, who it is for, and what would count as finished. Anything still unclear goes on the list to settle at the demo rather than holding the project up.",
+        "deliverable": "Deliverable — an agreed scope, in writing",
     },
     {
         "num": "02",
-        "label": "Choose",
-        "stem": "02-practice-select-right-foundation",
-        "title": "Finding the right technological foundation",
-        "short": "Platforms compared against your workflow, not a feature matrix.",
-        "body": "Selection is a fit question. We score candidate foundations against the mapped operation, weighting configurability and integration surface over feature counts, and we say plainly where each one would have to bend.",
-        "deliverable": "Deliverable — scored selection brief with dissenting notes",
+        "label": "Demo",
+        "stem": "03-practice-tailored-client-workspace",
+        "title": "A demo that shows what we understood",
+        "short": "You see our understanding as something working, before it is built.",
+        "body": "Rather than hand back a specification for you to imagine, we build a demo that shows what we understood and put it in front of you. You mark it up, we correct it, and the build does not start in earnest until you agree it is right.",
+        "deliverable": "Deliverable — a working demo, and your notes on it",
     },
     {
         "num": "03",
-        "label": "Tailor",
-        "stem": "03-practice-tailored-client-workspace",
-        "title": "Tailoring a shared foundation to one client",
-        "short": "A common base, configured until it reads like your own system.",
-        "body": "Screens, terminology, roles and approvals are shaped around the people who use them. Staff should recognise their own vocabulary on day one; training time is the honest measure of whether the tailoring worked.",
-        "deliverable": "Deliverable — configured workspace and role model",
+        "label": "Build",
+        "stem": "23-technology-workflow-automation",
+        "title": "Rapid build, tested and shipped",
+        "short": "Built quickly, on a pipeline that tests and deploys every change.",
+        "body": "The build moves fast because the pipeline carries the weight: automated testing and a short CI/CD workflow, so each change is verified and deployed without ceremony. That is what makes a quick feedback loop real rather than promised.",
+        "deliverable": "Deliverable — the working product, tested and deployed",
     },
     {
         "num": "04",
-        "label": "Connect",
-        "stem": "04-practice-existing-system-integration",
-        "title": "Connecting with existing systems",
-        "short": "Integration first. Replacement only where it is genuinely warranted.",
-        "body": "Most businesses already run software that works. We coordinate it through a governed integration service so accounting, routing, monitoring and commerce share one dependable version of the truth.",
-        "deliverable": "Deliverable — integration service and data contracts",
+        "label": "Iterate",
+        "stem": "05-practice-continuous-enhancements",
+        "title": "Your feedback, for as many rounds as it takes",
+        "short": "The real notes arrive after delivery. There is no limit on rounds.",
+        "body": "Once it is in your hands the useful feedback starts, and it rarely arrives all at once. We keep iterating for as many rounds as it takes — the count is not capped, and asking for another pass is expected rather than an imposition.",
+        "deliverable": "Deliverable — a release for every round of feedback",
     },
     {
         "num": "05",
-        "label": "Improve",
-        "stem": "05-practice-continuous-enhancements",
-        "title": "Delivering useful improvements continuously",
-        "short": "Small, frequent releases measured against operational outcomes.",
-        "body": "Improvement is a standing arrangement, not a follow-on project. Each release is scoped to something an operator will feel that week — a step removed, a report they can finally trust, a queue that clears earlier.",
-        "deliverable": "Deliverable — release cadence and outcome reporting",
+        "label": "Handover",
+        "stem": "22-technology-cross-platform-apps",
+        "title": "Complete, and handed over in full",
+        "short": "When the changes stop earning their place, the work is done.",
+        "body": "How long that takes depends on the product. When the iterations stop earning their place the work is complete, and the product, its code and everything needed to run it are handed over. The measure is simple: everyone is satisfied with what they got.",
+        "deliverable": "Deliverable — full handover of the product and its code",
     },
     {
         "num": "06",
-        "label": "Maintain",
+        "label": "Partner",
         "stem": "06-practice-long-term-technology-care",
-        "title": "A long-term technology relationship",
-        "short": "Version history, personalised care, and a team that stays.",
-        "body": "Systems age. We keep the record of every change, retire what stopped earning its place, and remain accountable for the platform years after the initial engagement closes.",
-        "deliverable": "Deliverable — maintained version history and care plan",
+        "title": "A long-term arrangement, where a product needs one",
+        "short": "Optional — a standing relationship for products that keep moving.",
+        "body": "Some products are finished at handover. Others keep moving, and for those we stay on: continued development, maintenance and accountability for as long as the product warrants it. It is an option, not a condition of working together.",
+        "deliverable": "Optional — an ongoing arrangement, for the products that call for it",
     },
 ]
 
@@ -176,10 +176,10 @@ TECH = [
 ]
 
 STATS = [
-    ("6", "Steps in every engagement, in the same order"),
-    ("5", "Sectors known at the workflow level"),
+    ("1&#8211;2", "Meetings before you see a working demo"),
+    ("5", "Steps from first meeting to handover"),
     ("17", "Technology disciplines maintained in-house"),
-    ("&#8734;", "Care continuing well past go-live"),
+    ("&#8734;", "Rounds of feedback — we iterate until you are satisfied"),
 ]
 
 CONTACTS = [
@@ -469,11 +469,11 @@ def build_home():
       <div class="editorial__grid">
         <div>
           <p class="eyebrow">01 — The problem</p>
-          <h2 class="editorial__title">Most systems were bought, not fitted.</h2>
+          <h2 class="editorial__title">A specification is hard to picture. A demo is not.</h2>
         </div>
         <div class="editorial__body">
-          <p>A plant, a distributor, and a property group can run the same named platform and still have nothing in common. What differs is the workflow — the approvals, the exceptions, the way a change order or a short shipment actually gets handled.</p>
-          <p>We start there. The foundation is chosen after the workflow is understood, and every configuration afterwards answers to it.</p>
+          <p>Written requirements get signed off long before anyone can see what they will actually get. Everyone reads the same document differently, and the gap only shows up late — when changing it is expensive.</p>
+          <p>So we put a working demo in front of you early, correct it against your notes, and build once you agree it is right. The disagreements happen while they are still cheap.</p>
         </div>
       </div>
     </section>
@@ -547,8 +547,8 @@ def build_practice():
   <main id="main">
     <section class="page-head shell">
       <p class="eyebrow">The practice</p>
-      <h1 class="display">Six steps, in the same order, every engagement.</h1>
-      <p class="lede">Nothing here is proprietary. It is simply the sequence that keeps a software programme honest — understand, choose, tailor, connect, improve, maintain.</p>
+      <h1 class="display">From the first meeting to handover, in five steps.</h1>
+      <p class="lede">Short scoping, a demo before the build, rapid delivery on a tested pipeline, and as many rounds of your feedback as it takes. A sixth step — staying on for the long term — is there for the products that need it.</p>
     </section>
 
     <div class="process shell" data-process>
@@ -568,7 +568,7 @@ def build_practice():
     return page(
         "practice.html", "practice",
         "The practice — Momentum Link Professionals",
-        "Six steps in the same order, every engagement: understand the workflow, choose the foundation, tailor it, connect existing systems, improve continuously, and maintain for the long term.",
+        "How we work: a meeting or two to scope it, a demo that shows what we understood, a rapid build on a tested CI/CD pipeline, unlimited rounds of your feedback, and a full handover.",
         body,
     )
 
