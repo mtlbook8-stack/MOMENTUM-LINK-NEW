@@ -251,8 +251,10 @@ a:hover { color: var(--rust); }
   min-height: var(--header-h);
 }
 
-.brand { display: flex; align-items: center; gap: 11px; }
+.brand { display: flex; align-items: center; }
 .brand:hover { color: inherit; }
+.brand svg { display: block; width: auto; height: 34px; }
+.site-footer__brand svg { display: block; width: auto; height: 40px; }
 .brand__mark {
   width: 11px; height: 11px;
   background: var(--blue);
@@ -558,9 +560,19 @@ a:hover { color: var(--rust); }
 /* ── Stats band ───────────────────────────────────────────────────────── */
 
 .stats { background: var(--ink); border-top: 1px solid rgba(242, 239, 232, .12); }
-.stats__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
-.stats__item { padding: 34px 0; border-right: 1px solid rgba(242, 239, 232, .1); }
-.stats__item:last-child { border-right: 0; }
+
+/*
+   Fixed column counts rather than auto-fit. With auto-fit the four stats
+   could wrap 3 + 1 while the narrow-screen rule was drawing bottom borders,
+   which put a rule straight through the wrapped item's text. Each layout now
+   states exactly which edges carry a divider.
+*/
+.stats__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.stats__item {
+  padding: 34px 26px 34px 0;
+  border-right: 1px solid rgba(242, 239, 232, .1);
+}
+.stats__item:last-child { border-right: 0; padding-right: 0; }
 .stats__n {
   font-family: var(--serif);
   font-size: 42px;
@@ -572,7 +584,6 @@ a:hover { color: var(--rust); }
   font-size: 14px;
   color: rgba(242, 239, 232, .66);
   margin-top: 8px;
-  padding-right: 20px;
   line-height: 1.45;
 }
 
@@ -1796,13 +1807,22 @@ a:hover { color: var(--rust); }
   .panels-hint__touch { display: inline; }
 
   .contact-grid { padding-top: 48px; gap: 36px; }
-  .stats__item { border-right: 0; border-bottom: 1px solid rgba(242, 239, 232, .1); padding: 26px 0; }
+  .stats__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stats__item { padding: 26px 20px 26px 0; border-right: 1px solid rgba(242, 239, 232, .1); }
+  .stats__item:nth-child(2n) { border-right: 0; padding-right: 0; }
+  .stats__item:nth-child(-n+2) { border-bottom: 1px solid rgba(242, 239, 232, .1); padding-bottom: 26px; }
+  .stats__item:nth-child(n+3) { padding-top: 26px; }
   .pres__edge { bottom: 120px; width: 20%; }
   .pres__controls { top: 18px; right: 18px; }
   .pres__brand { top: 20px; left: 18px; }
 }
 
 @media (max-width: 560px) {
+  /* One per row: dividers stack with them. */
+  .stats__grid { grid-template-columns: minmax(0, 1fr); }
+  .stats__item { border-right: 0; padding: 24px 0; border-bottom: 1px solid rgba(242, 239, 232, .1); }
+  .stats__item:last-child { border-bottom: 0; }
+
   .stage__pin { min-height: 460px; }
   .card-grid, .card-grid--tech, .card-grid--items { grid-template-columns: 1fr; }
   .practice-row { grid-template-columns: 1fr; }

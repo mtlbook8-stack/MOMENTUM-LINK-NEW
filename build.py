@@ -201,7 +201,7 @@ TECH = [
 ]
 
 STATS = [
-    ("100%", "Tailored solutions — never off-the-shelf shortcuts"),
+    ("1&#8211;2", "Meetings before you see a working demo"),
     ("Fast", "Delivery times, from planning to launch"),
     ("Real", "Working agents that finish the job"),
     ("&#8734;", "Rounds of feedback — we iterate until you are satisfied"),
@@ -210,7 +210,7 @@ STATS = [
 # What We Do, as the live site states it.
 SERVICES = [
     ("33-technology-modular-product-evolution", "Custom Software Builds",
-     "We design and build software tailored to your exact business needs — not off-the-shelf shortcuts."),
+     "Software built around your business — bespoke where that is what it takes, proven packages and libraries where they already do the job better."),
     ("31-technology-complexity-to-clarity", "System Migrations",
      "We bridge the gap between outdated systems and modern technology — handling the entire transition end to end."),
     ("25-technology-responsible-ai", "Smart Agents",
@@ -308,6 +308,17 @@ def layer_img(stem, alt, sizes, cls="", eager=False, attrs=""):
         f' alt="{e(alt)}"{hidden} width="{w}" height="{h}" {loading} decoding="async">'
         "</picture>"
     )
+
+
+def logo(variant):
+    """Inline the wordmark so its typeface and colours come from the page.
+    An <img> would resolve the font against the system instead."""
+    path = os.path.join(OUT, "assets", "logo", f"momentum-link-{variant}.inline.svg")
+    try:
+        with open(path, encoding="utf-8") as fh:
+            return fh.read()
+    except OSError:
+        return ""
 
 
 def media_size(stem):
@@ -428,7 +439,7 @@ def head(title, description, page, extra=""):
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300&amp;family=IBM+Plex+Sans:wght@300;400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300&amp;family=IBM+Plex+Sans:wght@300;400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=Archivo:wght@600&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/site.css?v={asset_version("assets/css/site.css")}">
   <script>document.documentElement.className = document.documentElement.className.replace("no-js", "js");</script>
 {extra}</head>
@@ -445,12 +456,8 @@ def header(page):
     return f"""
   <header class="site-header">
     <div class="site-header__inner">
-      <a class="brand" href="index.html">
-        <span class="brand__mark" aria-hidden="true"></span>
-        <span class="brand__text">
-          <span class="brand__name">Momentum Link</span>
-          <span class="brand__tag">Professionals</span>
-        </span>
+      <a class="brand" href="index.html" aria-label="Momentum Link Professionals — home">
+        {logo("dark-horizontal")}
       </a>
 
       <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-controls="site-nav" aria-label="Menu">
@@ -475,7 +482,7 @@ def footer():
   <footer class="site-footer">
     <div class="site-footer__grid">
       <div class="site-footer__col">
-        <span class="site-footer__brand">Momentum Link</span>
+        <span class="site-footer__brand">{logo("dark-horizontal")}</span>
         <span class="site-footer__blurb">Quickly linking your business to better technology. Built for delivery, optimized for results.</span>
       </div>
       <div class="site-footer__col">
