@@ -881,10 +881,63 @@
     });
   }
 
+  /* ── Get in touch modal ────────────────────────────────────────────────
+     Available from every page. Anything marked data-open-contact opens it;
+     those are ordinary links to the contact page, so without JavaScript they
+     simply navigate there instead.
+     -------------------------------------------------------------------- */
+
+  function initContactModal() {
+    var modal = $("[data-contact-modal]");
+    var triggers = $$("[data-open-contact]");
+    if (!modal || !triggers.length) return;
+
+    var lastFocus = null;
+
+    function focusable() {
+      return $$("a[href], button, input, textarea, select", modal)
+        .filter(function (el) { return !el.disabled && el.offsetParent !== null; });
+    }
+
+    function open(e) {
+      if (e) e.preventDefault();
+      lastFocus = document.activeElement;
+      modal.hidden = false;
+      document.body.classList.add("is-locked");
+      var first = focusable()[0];
+      if (first) first.focus();
+      document.addEventListener("keydown", onKey);
+    }
+
+    function close() {
+      if (modal.hidden) return;
+      modal.hidden = true;
+      document.body.classList.remove("is-locked");
+      document.removeEventListener("keydown", onKey);
+      if (lastFocus && lastFocus.focus) lastFocus.focus();
+    }
+
+    function onKey(e) {
+      if (e.key === "Escape") { e.preventDefault(); close(); return; }
+      if (e.key !== "Tab") return;
+      var items = focusable();
+      if (!items.length) return;
+      var first = items[0], last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+
+    triggers.forEach(function (el) { el.addEventListener("click", open); });
+    $$("[data-modal-close]", modal).forEach(function (el) { el.addEventListener("click", close); });
+  }
+
   /* ── Contact form ──────────────────────────────────────────────────── */
 
-  function initForm() {
-    var form = $("[data-contact-form]");
+  function initForms() {
+    $$("[data-contact-form]").forEach(initForm);
+  }
+
+  function initForm(form) {
     if (!form) return;
 
     var status = $("[data-form-status]", form);
@@ -991,7 +1044,8 @@
     initPanels();
     initDeck();
     initPresentation();
-    initForm();
+    initForms();
+    initContactModal();
 
     var year = $("[data-year]");
     if (year) year.textContent = new Date().getFullYear();

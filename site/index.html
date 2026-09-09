@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300&amp;family=IBM+Plex+Sans:wght@300;400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/site.css?v=cbfac68c">
+  <link rel="stylesheet" href="assets/css/site.css?v=b0882cdc">
   <script>document.documentElement.className = document.documentElement.className.replace("no-js", "js");</script>
 </head>
 <body data-page="home">
@@ -47,8 +47,10 @@
           <a class="nav__link" href="practice.html">Practice</a>
           <a class="nav__link" href="industries.html">Industries</a>
           <a class="nav__link" href="technology.html">Technology</a>
+          <a class="nav__link" href="about.html">About</a>
           <a class="nav__link" href="contact.html">Contact</a>
         <button class="nav__present" type="button" data-open-pres hidden>&#9654; Present</button>
+        <a class="nav__cta" href="contact.html" data-open-contact>Get in touch</a>
       </nav>
     </div>
     <div class="progress" data-progress aria-hidden="true"></div>
@@ -88,7 +90,7 @@
             <p class="stage__kicker">Build &middot; Migrate &middot; Deliver</p>
             <p class="stage__title stage__title--sub">We build, migrate, and deliver modern software solutions — so your technology works for you, not the other way around.</p>
             <div class="stage__actions">
-              <a class="btn btn--primary" href="contact.html">Get started</a>
+              <a class="btn btn--primary" href="contact.html" data-open-contact>Get started</a>
               <button class="btn btn--ghost" type="button" data-open-pres hidden>&#9654; Watch the presentation</button>
               <a class="btn btn--ghost" href="practice.html">How we work</a>
             </div>
@@ -261,7 +263,7 @@
     <section class="closing shell">
       <p class="eyebrow">Ready to move forward?</p>
       <h2 class="closing__title">Let&#8217;s link your business to better technology.</h2>
-      <a class="btn btn--dark" href="contact.html">Get in touch</a>
+      <a class="btn btn--dark" href="contact.html" data-open-contact>Get in touch</a>
     </section>
   </main>
 
@@ -277,6 +279,7 @@
         <a href="practice.html">Practice</a>
         <a href="industries.html">Industries</a>
         <a href="technology.html">Technology</a>
+        <a href="about.html">About</a>
         <a href="contact.html">Contact</a>
       </div>
       <div class="site-footer__col">
@@ -290,6 +293,51 @@
     </div>
   </footer>
 
-  <script src="assets/js/site.js?v=062492be" defer></script>
+
+  <div class="modal" data-contact-modal hidden role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal__scrim" data-modal-close></div>
+    <div class="modal__panel">
+      <button class="modal__close" type="button" data-modal-close aria-label="Close">&#10005;</button>
+      <div class="modal__media"><picture><source type="image/webp" srcset="media/43-process-meeting-768.webp 768w, media/43-process-meeting.webp 1536w" sizes="(max-width: 900px) 100vw, 420px"><img src="media/43-process-meeting.jpg" srcset="media/43-process-meeting-768.jpg 768w, media/43-process-meeting.jpg 1536w" sizes="(max-width: 900px) 100vw, 420px" alt="A meeting to establish what the project needs" width="1536" height="864" loading="lazy" decoding="async"></picture></div>
+      <div class="modal__body">
+        <p class="eyebrow">Get in touch</p>
+        <h2 class="modal__title" id="modal-title">Let&#8217;s get to work.</h2>
+        <p class="modal__text">Tell us about your business — we will handle the technology. A meeting or two is usually all it takes before you are looking at a working demo.</p>
+        <p class="modal__direct">
+          <a href="mailto:hello@momentumlink.com">hello@momentumlink.com</a>
+          <a href="tel:+13473421302">(347) 342-1302</a>
+        </p>
+        
+      <form class="form-card" data-contact-form data-endpoint="" data-mailto="hello@momentumlink.com"
+            action="mailto:hello@momentumlink.com" method="post" enctype="text/plain" novalidate>
+        <h2 class="form-card__title">Send a brief</h2>
+        <div class="form-fields">
+            <div class="field">
+              <label class="field__label" for="m-name">Name *</label>
+              <input type="text" id="m-name" name="name" placeholder="Your name"
+                     autocomplete="name" required>
+              <p class="field__error" aria-live="polite"></p>
+            </div>
+            <div class="field">
+              <label class="field__label" for="m-email">Email *</label>
+              <input type="email" id="m-email" name="email" placeholder="you@company.com"
+                     autocomplete="email" required>
+              <p class="field__error" aria-live="polite"></p>
+            </div>
+          <div class="field">
+            <label class="field__label" for="m-message">What you need *</label>
+            <textarea id="m-message" name="message" rows="3"
+                      placeholder="Tell us about your business and what you are trying to do." required></textarea>
+            <p class="field__error" aria-live="polite"></p>
+          </div>
+        </div>
+        <button class="btn btn--dark" type="submit">Send brief</button>
+        <p class="form-status" data-form-status role="status" aria-live="polite"></p>
+      </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/js/site.js?v=4df7f94a" defer></script>
 </body>
 </html>

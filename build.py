@@ -28,6 +28,12 @@ try:
 except OSError:
     MEDIA_SIZES = {}
 
+# Web3Forms access key. Get one at https://web3forms.com (free, emailed to
+# you). Until this is filled in the forms fall back to opening the visitor's
+# mail client, so nothing is silently dropped.
+WEB3FORMS_KEY = ""
+WEB3FORMS_URL = "https://api.web3forms.com/submit"
+
 EMAIL_NEW = "hello@momentumlink.com"
 EMAIL_CARE = "hello@momentumlink.com"
 PHONE = "(347) 342-1302"
@@ -40,6 +46,7 @@ PAGES = [
     ("practice.html", "practice", "Practice"),
     ("industries.html", "industries", "Industries"),
     ("technology.html", "technology", "Technology"),
+    ("about.html", "about", "About"),
     ("contact.html", "contact", "Contact"),
 ]
 
@@ -225,6 +232,24 @@ FIELDS = [
     ("email", "Email", "you@company.com", "email", True),
 ]
 
+# What we believe, as the live site states it.
+BELIEFS = [
+    ("Technology should serve you",
+     "Software shouldn't fight you. We build systems that bend to your business — not the other way around. No workarounds. No friction. Just tech that works."),
+    ("Speed matters",
+     "Every day on outdated tech is a day of lost potential. We move fast — from first conversation to working solution — without ever cutting corners."),
+    ("Best option, not just an option",
+     "You shouldn't have to ask about every detail. We constantly research the technology landscape and tailor every build to deliver the best possible result."),
+    ("Real work, not buzzwords",
+     "We build agents and systems that actually do the job. Not flashy demos. Not hype. Working technology that delivers measurable results."),
+]
+
+NAME_PARTS = [
+    ("Momentum", "because speed matters. Outdated systems slow you down. We get you moving, and keep you moving."),
+    ("Link", "because we connect you to better technology. We bridge the gap between where you are and where the industry is."),
+    ("Professionals", "because this is what we do, every day. Modern technology delivered with care."),
+]
+
 # Image sizes hints, per layout context.
 SIZES = {
     "full": "100vw",
@@ -291,6 +316,76 @@ def asset_version(relpath):
         return "dev"
 
 
+def contact_form(prefix, title, submit_label, compact=False):
+    """The brief form. Rendered on the contact page and inside the modal, so
+    the two never drift apart."""
+    used = FIELDS[:1] + FIELDS[3:] if compact else FIELDS
+    fields = ""
+    for name, label, placeholder, kind, required in used:
+        req = " required" if required else ""
+        star = " *" if required else ""
+        auto = ("email" if kind == "email"
+                else "organization" if name == "organisation"
+                else "name" if name == "name" else "off")
+        fields += f"""
+            <div class="field">
+              <label class="field__label" for="{prefix}-{name}">{e(label)}{star}</label>
+              <input type="{kind}" id="{prefix}-{name}" name="{name}" placeholder="{e(placeholder)}"
+                     autocomplete="{auto}"{req}>
+              <p class="field__error" aria-live="polite"></p>
+            </div>"""
+
+    # Web3Forms takes the key plus a subject; botcheck is its honeypot.
+    hidden = ""
+    if WEB3FORMS_KEY:
+        hidden = f"""
+          <input type="hidden" name="access_key" value="{WEB3FORMS_KEY}">
+          <input type="hidden" name="subject" value="New brief from momentumlink.com">
+          <input type="hidden" name="from_name" value="Momentum Link website">
+          <input type="checkbox" name="botcheck" class="visually-hidden" tabindex="-1" autocomplete="off">"""
+
+    endpoint = WEB3FORMS_URL if WEB3FORMS_KEY else ""
+
+    return f"""
+      <form class="form-card" data-contact-form data-endpoint="{endpoint}" data-mailto="{EMAIL_NEW}"
+            action="mailto:{EMAIL_NEW}" method="post" enctype="text/plain" novalidate>
+        <h2 class="form-card__title">{e(title)}</h2>{hidden}
+        <div class="form-fields">{fields}
+          <div class="field">
+            <label class="field__label" for="{prefix}-message">What you need *</label>
+            <textarea id="{prefix}-message" name="message" rows="{3 if compact else 4}"
+                      placeholder="Tell us about your business and what you are trying to do." required></textarea>
+            <p class="field__error" aria-live="polite"></p>
+          </div>
+        </div>
+        <button class="btn btn--dark" type="submit">{e(submit_label)}</button>
+        <p class="form-status" data-form-status role="status" aria-live="polite"></p>
+      </form>"""
+
+
+def contact_modal():
+    """Sits on every page; opened by anything marked data-open-contact."""
+    return f"""
+  <div class="modal" data-contact-modal hidden role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal__scrim" data-modal-close></div>
+    <div class="modal__panel">
+      <button class="modal__close" type="button" data-modal-close aria-label="Close">&#10005;</button>
+      <div class="modal__media">{picture('43-process-meeting', 'A meeting to establish what the project needs', '(max-width: 900px) 100vw, 420px')}</div>
+      <div class="modal__body">
+        <p class="eyebrow">Get in touch</p>
+        <h2 class="modal__title" id="modal-title">Let&#8217;s get to work.</h2>
+        <p class="modal__text">Tell us about your business — we will handle the technology. A meeting or two is usually all it takes before you are looking at a working demo.</p>
+        <p class="modal__direct">
+          <a href="mailto:{EMAIL_NEW}">{EMAIL_NEW}</a>
+          <a href="tel:{PHONE_HREF}">{PHONE}</a>
+        </p>
+        {contact_form("m", "Send a brief", "Send brief", compact=True)}
+      </div>
+    </div>
+  </div>
+"""
+
+
 def head(title, description, page, extra=""):
     canonical = ""
     og_url = ""
@@ -353,6 +448,7 @@ def header(page):
 
       <nav class="nav" id="site-nav" aria-label="Primary">{links}
         <button class="nav__present" type="button" data-open-pres hidden>&#9654; Present</button>
+        <a class="nav__cta" href="contact.html" data-open-contact>Get in touch</a>
       </nav>
     </div>
     <div class="progress" data-progress aria-hidden="true"></div>
@@ -385,6 +481,7 @@ def footer():
     </div>
   </footer>
 
+{contact_modal()}
   <script src="assets/js/site.js?v={asset_version("assets/js/site.js")}" defer></script>
 </body>
 </html>
@@ -504,7 +601,7 @@ def build_home():
             <p class="stage__kicker">Build &middot; Migrate &middot; Deliver</p>
             <p class="stage__title stage__title--sub">We build, migrate, and deliver modern software solutions — so your technology works for you, not the other way around.</p>
             <div class="stage__actions">
-              <a class="btn btn--primary" href="contact.html">Get started</a>
+              <a class="btn btn--primary" href="contact.html" data-open-contact>Get started</a>
               <button class="btn btn--ghost" type="button" data-open-pres hidden>&#9654; Watch the presentation</button>
               <a class="btn btn--ghost" href="practice.html">How we work</a>
             </div>
@@ -567,7 +664,7 @@ def build_home():
     <section class="closing shell">
       <p class="eyebrow">Ready to move forward?</p>
       <h2 class="closing__title">Let&#8217;s link your business to better technology.</h2>
-      <a class="btn btn--dark" href="contact.html">Get in touch</a>
+      <a class="btn btn--dark" href="contact.html" data-open-contact>Get in touch</a>
     </section>
   </main>
 """
@@ -746,18 +843,6 @@ def build_contact():
             <p class="contact-item__note">{e(note)}</p>
           </div>"""
 
-    fields = ""
-    for name, label, placeholder, kind, required in FIELDS:
-        req = " required" if required else ""
-        star = " *" if required else ""
-        fields += f"""
-              <div class="field">
-                <label class="field__label" for="f-{name}">{e(label)}{star}</label>
-                <input type="{kind}" id="f-{name}" name="{name}" placeholder="{e(placeholder)}"
-                       autocomplete="{'email' if kind == 'email' else 'organization' if name == 'organisation' else 'name' if name == 'name' else 'off'}"{req}>
-                <p class="field__error" id="f-{name}-error" aria-live="polite"></p>
-              </div>"""
-
     body = f"""
   <main id="main">
     <section class="band band--contact contact-hero">
@@ -774,20 +859,7 @@ def build_contact():
       <div class="contact-list">{items}
       </div>
 
-      <form class="form-card" data-contact-form data-endpoint="" data-mailto="{EMAIL_NEW}"
-            action="mailto:{EMAIL_NEW}" method="post" enctype="text/plain" novalidate>
-        <h2 class="form-card__title">Send a brief</h2>
-        <div class="form-fields">{fields}
-          <div class="field">
-            <label class="field__label" for="f-message">What is not working *</label>
-            <textarea id="f-message" name="message" rows="4"
-                      placeholder="The process, the system, the report — wherever the friction is." required></textarea>
-            <p class="field__error" id="f-message-error" aria-live="polite"></p>
-          </div>
-        </div>
-        <button class="btn btn--dark" type="submit">Send brief</button>
-        <p class="form-status" data-form-status role="status" aria-live="polite"></p>
-      </form>
+{contact_form("c", "Send a brief", "Send brief")}
     </section>
   </main>
 """
@@ -795,6 +867,83 @@ def build_contact():
         "contact.html", "contact",
         "Contact — Momentum Link Professionals",
         "Tell us about your business and we will handle the technology. Reach Momentum Link Professionals by email or phone, or send a brief.",
+        body,
+    )
+
+
+def build_about():
+    beliefs = ""
+    for title, text in BELIEFS:
+        beliefs += f"""
+          <article class="belief" data-reveal>
+            <h3 class="belief__title">{e(title)}</h3>
+            <p class="belief__text">{e(text)}</p>
+          </article>"""
+
+    parts = ""
+    for word, meaning in NAME_PARTS:
+        parts += f"""
+          <div class="namepart">
+            <p class="namepart__word">{e(word)}</p>
+            <p class="namepart__meaning">{e(meaning)}</p>
+          </div>"""
+
+    body = f"""
+  <main id="main">
+    <section class="band band--contact contact-hero">
+      {layer_img('30-technology-connected-ecosystem', 'Connected technology ecosystem', SIZES['full'], cls='band__bg', eager=True)}
+      <div class="band__veil" aria-hidden="true"></div>
+      <div class="band__inner shell">
+        <p class="eyebrow eyebrow--blue">About us</p>
+        <h1 class="display">We close the gap between fast-moving technology and the businesses that need it.</h1>
+      </div>
+    </section>
+
+    <section class="editorial shell">
+      <div class="editorial__grid">
+        <div>
+          <p class="eyebrow">Our story</p>
+          <h2 class="editorial__title">The industry moves faster than most businesses can.</h2>
+        </div>
+        <div class="editorial__body">
+          <p>The technology industry moves at a pace most businesses simply cannot match. Every week brings new tools, new approaches, new ways to do things faster and better.</p>
+          <p>But most businesses do not have the time or resources to research every option, evaluate the noise, and migrate to what actually works. They get stuck — running on outdated systems, missing the upside.</p>
+          <p>That is the gap we close. We do the research, build the solutions, and handle the delivery — so our clients keep moving forward.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card-section shell" style="padding-top:24px" aria-label="What we believe">
+      <p class="eyebrow" style="margin-bottom:8px">What we believe</p>
+      <p class="lede" style="margin-bottom:40px">Four principles that drive everything we build.</p>
+      <div class="beliefs">{beliefs}
+      </div>
+    </section>
+
+    <section class="band">
+      {layer_img('02-practice-select-right-foundation', 'Choosing the right foundation', SIZES['full'], cls='band__bg')}
+      <div class="band__veil" aria-hidden="true"></div>
+      <div class="band__inner shell">
+        <div class="band__copy">
+          <p class="eyebrow eyebrow--blue">The name</p>
+          <h2 class="band__title">Why &ldquo;Momentum Link&rdquo;?</h2>
+          <div class="nameparts">{parts}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="closing shell">
+      <p class="eyebrow">Ready to move forward?</p>
+      <h2 class="closing__title">Let&#8217;s talk about where your business is — and where it could be.</h2>
+      <a class="btn btn--dark" href="contact.html" data-open-contact>Get in touch</a>
+    </section>
+  </main>
+"""
+    return page(
+        "about.html", "about",
+        "About — Momentum Link Professionals",
+        "We close the gap between fast-moving technology and the businesses that need it. Our story, what we believe, and why we are called Momentum Link.",
         body,
     )
 
@@ -863,6 +1012,7 @@ def main():
         build_industries(),
         build_technology(),
         build_contact(),
+        build_about(),
         build_404(),
     ] + build_extras()
     print("Wrote " + ", ".join(made))
