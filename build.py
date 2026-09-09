@@ -1141,6 +1141,27 @@ def build_extras():
         )
     written.append("sitemap.xml")
 
+    # Azure Static Web Apps reads this from the app root: the not-found page,
+    # and how long each kind of file may be cached. Media filenames are stable,
+    # so they can be held for a year; the stylesheet and script keep the same
+    # names and are busted by the ?v= hash, so they get a day.
+    aswa = {
+        "trailingSlash": "auto",
+        "responseOverrides": {"404": {"rewrite": "/404.html"}},
+        "globalHeaders": {
+            "X-Content-Type-Options": "nosniff",
+            "Referrer-Policy": "strict-origin-when-cross-origin",
+        },
+        "routes": [
+            {"route": "/media/*", "headers": {"Cache-Control": "public, max-age=31536000, immutable"}},
+            {"route": "/assets/*", "headers": {"Cache-Control": "public, max-age=86400"}},
+            {"route": "/*.html", "headers": {"Cache-Control": "public, max-age=600, must-revalidate"}},
+        ],
+    }
+    with open(os.path.join(OUT, "staticwebapp.config.json"), "w", encoding="utf-8") as fh:
+        json.dump(aswa, fh, indent=2)
+    written.append("staticwebapp.config.json")
+
     if CUSTOM_DOMAIN:
         with open(os.path.join(OUT, "CNAME"), "w", encoding="utf-8") as fh:
             fh.write(CUSTOM_DOMAIN + chr(10))

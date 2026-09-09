@@ -70,21 +70,58 @@ with them.
 
 ## Deployment
 
-Live at **https://mtlbook8-stack.github.io/MOMENTUM-LINK-NEW/**
+Two workflows live in `.github/workflows`:
 
-Hosted on GitHub Pages from this repository. Pushing to `main` runs
-`.github/workflows/deploy.yml`, which uploads `site/` and publishes it — there is no
-manual publish step. To update the live site:
+| Workflow | Target | Needs |
+|---|---|---|
+| `azure-static-web-apps.yml` | Azure Static Web Apps — the real site | `AZURE_STATIC_WEB_APPS_API_TOKEN` secret |
+| `deploy.yml` | GitHub Pages — the staging copy | nothing |
+
+Both publish the `site/` folder on a push to `main`. To update:
 
 ```bash
 python build.py
 git add -A && git commit -m "Update content" && git push
 ```
 
-The deploy takes about a minute; watch it under the repository's Actions tab.
+### Putting this on momentumlinkpro.com
 
-To move to a custom domain later, add the domain in the repository's Pages settings,
-set `BASE_URL` in `build.py` to it, and rebuild so the canonical URLs and sitemap follow.
+The live site runs on Azure Static Web Apps (`www.momentumlinkpro.com` resolves
+to `salmon-pond-077c4980f.7.azurestaticapps.net`), so this replaces it in place:
+
+1. In the Azure portal, open the Static Web App that serves the domain.
+2. **Manage deployment token** → copy it.
+3. In this repository: **Settings → Secrets and variables → Actions → New
+   repository secret**, named `AZURE_STATIC_WEB_APPS_API_TOKEN`.
+4. Set the origin in `build.py`, then rebuild, commit and push:
+
+   ```python
+   BASE_URL = "https://www.momentumlinkpro.com"
+   ```
+
+   Everything absolute follows from it — canonical links, Open Graph URLs, the
+   sitemap and the schema.org graph.
+
+If the existing Static Web App is wired to another repository, either repoint
+it here or create a new one and move the custom domain across; the deployment
+token is what decides where a push lands.
+
+`staticwebapp.config.json` ships in `site/` and is written by `build.py`. It
+sets the 404 page and the cache lifetimes: a year for `media/` (stable
+filenames), a day for `assets/` (same filenames, busted by the `?v=` hash),
+ten minutes for HTML.
+
+`CUSTOM_DOMAIN` in `build.py` writes a `CNAME` file, which is only how GitHub
+Pages is told about a domain. Azure does not read it — leave it empty unless
+Pages is serving the domain.
+
+### Making the repository private
+
+Azure Static Web Apps deploys from a private repository without changing
+anything. **GitHub Pages does not** — on the free plan, a private repository
+cannot publish Pages, so `deploy.yml` will start failing. Once Azure is
+serving the site, delete `.github/workflows/deploy.yml` (or keep it and accept
+the failed runs).
 
 ## Still to do before this is a real public site
 
