@@ -10,6 +10,7 @@ forty times. Run it after editing content:
 Output goes to ./site — the folder you deploy.
 """
 
+import datetime
 import hashlib
 import html
 import json
@@ -18,9 +19,19 @@ import os
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "site")
 
-# Set this to the live origin (no trailing slash) to emit absolute canonical
-# and Open Graph URLs; leave empty for relative-only output.
+# The origin this site is served from. Everything that must be absolute —
+# canonical links, Open Graph URLs, the sitemap and the schema.org graph —
+# is built from it.
+#
+# To move the site onto the real domain: point momentumlinkpro.com at GitHub
+# Pages, set CUSTOM_DOMAIN below, change BASE_URL to "https://www.momentumlinkpro.com",
+# and rebuild. The domain already carries the search history; the github.io
+# address does not, and two copies of the same content compete with each other.
 BASE_URL = "https://mtlbook8-stack.github.io/MOMENTUM-LINK-NEW"
+
+# Set to e.g. "www.momentumlinkpro.com" to have the build write a CNAME file,
+# which is how GitHub Pages is told to serve the site from that domain.
+CUSTOM_DOMAIN = ""
 
 try:
     with open(os.path.join(OUT, "media", "manifest.json"), encoding="utf-8") as _fh:
@@ -430,6 +441,83 @@ def contact_modal():
 """
 
 
+def structured_data(page, title, description):
+    """Schema.org graph. Search engines get an explicit statement of who the
+    company is, what it sells and where each page sits, rather than having to
+    infer it from prose."""
+    if not BASE_URL:
+        return ""
+
+    root = BASE_URL + "/"
+    filename = next((f for f, k, _ in PAGES if k == page), "index.html")
+    url = root if filename == "index.html" else f"{root}{filename}"
+    label = next((lbl for _, k, lbl in PAGES if k == page), "Home")
+
+    org = {
+        "@type": "ProfessionalService",
+        "@id": root + "#organization",
+        "name": "Momentum Link Professionals",
+        "alternateName": "Momentum Link",
+        "url": root,
+        "slogan": "Quickly linking your business to better tech.",
+        "description": ("We build, migrate, and deliver modern software solutions — custom software "
+                        "builds, system migrations and smart agents that handle real work."),
+        "email": EMAIL_NEW,
+        "telephone": PHONE,
+        "logo": {"@type": "ImageObject", "url": root + "assets/logo/momentum-link-dark-stacked.svg"},
+        "image": root + "media/31-technology-complexity-to-clarity.jpg",
+        "sameAs": ["https://www.momentumlinkpro.com/"],
+        "knowsAbout": [
+            "Custom software development", "System migration", "Software agents and automation",
+            "CI/CD delivery", "API integration", "Cloud-native systems", "Data engineering",
+        ],
+        "areaServed": [{"@type": "Industry", "name": n} for n in [
+            "Manufacturing and Logistics", "Construction", "Wholesale Distribution",
+            "Property Management", "Retail and Ecommerce", "Telecommunications",
+        ]],
+        "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "What we do",
+            "itemListElement": [
+                {"@type": "Offer", "itemOffered": {"@type": "Service", "name": t.replace("&amp;", "and"),
+                                                   "description": d}}
+                for _, t, d in SERVICES
+            ],
+        },
+    }
+
+    website = {
+        "@type": "WebSite",
+        "@id": root + "#website",
+        "url": root,
+        "name": "Momentum Link Professionals",
+        "publisher": {"@id": root + "#organization"},
+        "inLanguage": "en",
+    }
+
+    webpage = {
+        "@type": "WebPage",
+        "@id": url + "#webpage",
+        "url": url,
+        "name": title,
+        "description": description,
+        "isPartOf": {"@id": root + "#website"},
+        "about": {"@id": root + "#organization"},
+        "inLanguage": "en",
+    }
+
+    crumbs = [{"@type": "ListItem", "position": 1, "name": "Home", "item": root}]
+    if filename != "index.html":
+        crumbs.append({"@type": "ListItem", "position": 2, "name": label, "item": url})
+    breadcrumb = {"@type": "BreadcrumbList", "@id": url + "#breadcrumb", "itemListElement": crumbs}
+    webpage["breadcrumb"] = {"@id": url + "#breadcrumb"}
+
+    graph = {"@context": "https://schema.org", "@graph": [org, website, webpage, breadcrumb]}
+    return ('  <script type="application/ld+json">'
+            + json.dumps(graph, ensure_ascii=False, separators=(",", ":"))
+            + "</script>\n")
+
+
 def head(title, description, page, extra=""):
     canonical = ""
     og_url = ""
@@ -463,6 +551,7 @@ def head(title, description, page, extra=""):
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300&amp;family=IBM+Plex+Sans:wght@300;400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=Archivo:wght@600&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/site.css?v={asset_version("assets/css/site.css")}">
+{structured_data(page, title, description)}
   <script>document.documentElement.className = document.documentElement.className.replace("no-js", "js");</script>
 {extra}</head>
 <body data-page="{page or 'home'}">
@@ -714,8 +803,8 @@ def build_home():
 """
     return page(
         "index.html", "home",
-        "Momentum Link Professionals — Quickly linking your business to better tech",
-        "We build, migrate, and deliver modern software solutions — so your technology works for you, not the other way around. Custom builds, system migrations and smart agents that do real work.",
+        "Custom Software, Migrations & Smart Agents | Momentum Link",
+        "We build, migrate and deliver modern software — custom builds, system migrations and smart agents that do real work. Fast delivery, tailored to your business.",
         body,
     )
 
@@ -778,8 +867,8 @@ def build_practice():
 """
     return page(
         "practice.html", "practice",
-        "The practice — Momentum Link Professionals",
-        "How we work: a meeting or two to scope it, a demo that shows what we understood, a rapid build on a tested CI/CD pipeline, unlimited rounds of your feedback, and a full handover.",
+        "How We Work: A Demo First, Then the Build | Momentum Link",
+        "A meeting or two to scope it, a demo before we build, rapid delivery on a tested CI/CD pipeline, unlimited rounds of feedback, then a full handover.",
         body,
     )
 
@@ -821,8 +910,8 @@ def build_industries():
 """
     return page(
         "industries.html", "industries",
-        "Industries — Momentum Link Professionals",
-        "Manufacturing and logistics, construction, wholesale distribution, property, retail commerce and telecommunications — six sectors understood at the workflow level, each with its own accounting shape and exceptions.",
+        "Industry Software: Manufacturing to Telecom | Momentum Link",
+        "Software for manufacturing and logistics, construction, wholesale distribution, property, retail and telecommunications — six sectors known at the workflow level.",
         body,
     )
 
@@ -871,8 +960,8 @@ def build_technology():
 """
     return page(
         "technology.html", "technology",
-        "Technology capability — Momentum Link Professionals",
-        "Seventeen technology disciplines built and maintained in-house: integration, cloud-native systems, data engineering, automation, zero-trust security, digital twins and more.",
+        "Technology: Integration, Cloud, Data & AI | Momentum Link",
+        "Seventeen disciplines built and maintained in-house: API integration, cloud-native systems, data engineering, workflow automation, zero-trust security and more.",
         body,
     )
 
@@ -910,7 +999,7 @@ def build_contact():
 """
     return page(
         "contact.html", "contact",
-        "Contact — Momentum Link Professionals",
+        "Contact Us — Start With a Working Demo | Momentum Link",
         "Tell us about your business and we will handle the technology. Reach Momentum Link Professionals by email or phone, or send a brief.",
         body,
     )
@@ -988,7 +1077,7 @@ def build_about():
 """
     return page(
         "about.html", "about",
-        "About — Momentum Link Professionals",
+        "About Us — Modern Software, Delivered Fast | Momentum Link",
         "We close the gap between fast-moving technology and the businesses that need it. Our story, what we believe, and why we are called Momentum Link.",
         body,
     )
@@ -1008,7 +1097,8 @@ def build_404():
     with open(os.path.join(OUT, "404.html"), "w", encoding="utf-8") as fh:
         fh.write(
             head("Page not found — Momentum Link Professionals",
-                 "The requested page could not be found.", "home")
+                 "The requested page could not be found.", "home",
+                 extra='  <meta name="robots" content="noindex, follow">\n')
             + header("")
             + body
             + footer()
@@ -1037,8 +1127,10 @@ def build_extras():
         written.append("favicon.svg (skipped: mark missing)")
 
     root = BASE_URL or "https://example.com"
+    today = datetime.date.today().isoformat()
+    NEWLINE = chr(10)
     urls = "".join(
-        f"\n  <url><loc>{root}/{'' if f == 'index.html' else f}</loc></url>"
+        f"{NEWLINE}  <url><loc>{root}/{'' if f == 'index.html' else f}</loc><lastmod>{today}</lastmod></url>"
         for f, _, _ in PAGES
     )
     with open(os.path.join(OUT, "sitemap.xml"), "w", encoding="utf-8") as fh:
@@ -1048,6 +1140,11 @@ def build_extras():
             f"{urls}\n</urlset>\n"
         )
     written.append("sitemap.xml")
+
+    if CUSTOM_DOMAIN:
+        with open(os.path.join(OUT, "CNAME"), "w", encoding="utf-8") as fh:
+            fh.write(CUSTOM_DOMAIN + chr(10))
+        written.append("CNAME")
 
     with open(os.path.join(OUT, "robots.txt"), "w", encoding="utf-8") as fh:
         fh.write(f"User-agent: *\nAllow: /\n\nSitemap: {root}/sitemap.xml\n")
