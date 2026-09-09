@@ -276,16 +276,38 @@ def e(text):
     return html.escape(str(text), quote=True)
 
 
-def picture(stem, alt, sizes, eager=False, cls=""):
-    """Responsive <picture> with a WebP source and a JPEG fallback."""
+BLANK = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E"
+
+
+def picture(stem, alt, sizes, eager=False, cls="", defer=False):
+    """Responsive <picture> with a WebP source and a JPEG fallback.
+
+    defer=True holds the URLs in data attributes instead, for images that sit
+    inside the viewport but are not being looked at — a stacked deck, or the
+    steps behind the open one. loading="lazy" cannot help there, because the
+    browser rightly considers them visible. A <noscript> copy keeps them
+    reachable when the script does not run."""
     loading = 'loading="eager" fetchpriority="high"' if eager else 'loading="lazy"'
     class_attr = f' class="{cls}"' if cls else ""
     w, h = media_size(stem)
+    webp = f"media/{stem}-768.webp 768w, media/{stem}.webp 1536w"
+    jpg = f"media/{stem}-768.jpg 768w, media/{stem}.jpg 1536w"
+    common = (f' sizes="{sizes}" alt="{e(alt)}" width="{w}" height="{h}"'
+              f' {loading} decoding="async"')
+
+    if defer:
+        return (
+            '<picture data-defer>'
+            f'<source type="image/webp" data-srcset="{webp}" sizes="{sizes}">'
+            f'<img{class_attr} src="{BLANK}" data-src="media/{stem}.jpg" data-srcset="{jpg}"{common}>'
+            "</picture>"
+            f'<noscript><img{class_attr} src="media/{stem}.jpg" srcset="{jpg}"{common}></noscript>'
+        )
+
     return (
         "<picture>"
-        f'<source type="image/webp" srcset="media/{stem}-768.webp 768w, media/{stem}.webp 1536w" sizes="{sizes}">'
-        f'<img{class_attr} src="media/{stem}.jpg" srcset="media/{stem}-768.jpg 768w, media/{stem}.jpg 1536w"'
-        f' sizes="{sizes}" alt="{e(alt)}" width="{w}" height="{h}" {loading} decoding="async">'
+        f'<source type="image/webp" srcset="{webp}" sizes="{sizes}">'
+        f'<img{class_attr} src="media/{stem}.jpg" srcset="{jpg}"{common}>'
         "</picture>"
     )
 
@@ -722,7 +744,7 @@ def build_practice():
         steps += f"""
         <article class="step" id="step-{p['num']}" data-step>
           <div class="step__inner{wide}">
-            <div class="step__media" style="--media-ratio:{w}/{h}">{picture(p['stem'], p['title'], SIZES['half'])}</div>
+            <div class="step__media" style="--media-ratio:{w}/{h}">{picture(p['stem'], p['title'], SIZES['half'], defer=i >= 2)}</div>
             <div class="step__copy">
               <p class="step__num">{p['num']} &middot; {e(p['label'])}</p>
               <h2 class="step__title">{e(p['title'])}</h2>
@@ -808,10 +830,10 @@ def build_industries():
 def build_technology():
     total = len(TECH)
     cards = ""
-    for stem, title, blurb in TECH:
+    for index, (stem, title, blurb) in enumerate(TECH):
         cards += f"""
         <figure class="card card--tech" data-card data-reveal>
-          {picture(stem, title, SIZES['card'])}
+          {picture(stem, title, SIZES['card'], defer=index >= 3)}
           <figcaption>
             <span class="card__title">{e(title)}</span>
             <span class="card__sub">{e(blurb)}</span>
@@ -1006,7 +1028,6 @@ def build_extras():
         inner = mark.split(">", 1)[1].rsplit("</svg>", 1)[0]
         favicon = (
             '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">'
-            '<rect width="120" height="120" rx="22" fill="#10222F"/>'
             + inner + "</svg>"
         )
         with open(os.path.join(OUT, "favicon.svg"), "w", encoding="utf-8") as fh:

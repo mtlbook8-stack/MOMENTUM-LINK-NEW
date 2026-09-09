@@ -16,6 +16,32 @@
   function ease(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
   function lerp(a, b, t) { return a + (b - a) * t; }
 
+  /* ── Deferred pictures ─────────────────────────────────────────────────
+     Images that sit inside the viewport but are not being looked at hold
+     their URLs in data attributes; this puts them back when they are wanted.
+     -------------------------------------------------------------------- */
+
+  function hydrate(scope) {
+    if (!scope) return;
+    var pics = scope.hasAttribute && scope.hasAttribute("data-defer")
+      ? [scope] : $$("[data-defer]", scope);
+    pics.forEach(function (pic) {
+      var source = pic.querySelector("source");
+      var img = pic.querySelector("img");
+      if (source && source.dataset.srcset) {
+        source.srcset = source.dataset.srcset;
+        source.removeAttribute("data-srcset");
+      }
+      if (img && img.dataset.srcset) {
+        img.srcset = img.dataset.srcset;
+        img.src = img.dataset.src;
+        img.removeAttribute("data-srcset");
+        img.removeAttribute("data-src");
+      }
+      pic.removeAttribute("data-defer");
+    });
+  }
+
   /* ── Mobile navigation ─────────────────────────────────────────────── */
 
   function initNav() {
@@ -289,6 +315,7 @@
       }
 
       steps.forEach(function (el, i) {
+        if (Math.abs(i - current) <= 1) hydrate(el);
         el.classList.toggle("is-active", i === current);
 
         // Anchor the panel's growth on its own node in the rail, so it really
@@ -371,6 +398,11 @@
     }
 
     function render() {
+      // Fetch what is about to be seen: the face-up card and the next few.
+      order.slice(0, DECK_VISIBLE + 2).forEach(function (cardIndex) {
+        hydrate(cards[cardIndex]);
+      });
+
       order.forEach(function (cardIndex, depth) {
         var el = cards[cardIndex];
         var buried = depth > DECK_VISIBLE;
@@ -445,6 +477,7 @@
       deck.classList.add("is-shuffling");
       var geo = fanGeometry();
       var spread = order.slice(0, geo.count);
+      spread.forEach(function (cardIndex) { hydrate(cards[cardIndex]); });
 
       // Open the fan, rippling outwards from the top card.
       spread.forEach(function (cardIndex, slot) {
@@ -549,6 +582,7 @@
         });
         render();
       } else {
+        cards.forEach(hydrate);           // the grid shows them all
         deck.removeAttribute("tabindex");
         deck.removeAttribute("role");
         deck.removeAttribute("aria-label");
