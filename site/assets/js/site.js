@@ -641,6 +641,9 @@
 
   var SLIDE_MS = 5600;
 
+  // The real mark, so the overlay is not still wearing the placeholder.
+  var PRES_MARK = '<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><title>Momentum Link mark</title><defs>  <linearGradient id="pm-g1" x1="0" y1="0" x2="0.35" y2="1"><stop offset="0" stop-color="#EAF2FB"></stop><stop offset="0.6" stop-color="#D3E4F6"></stop><stop offset="1" stop-color="#C1D8F0"></stop></linearGradient>  <linearGradient id="pm-g2" x1="0" y1="0" x2="0.35" y2="1"><stop offset="0" stop-color="#97C3EE"></stop><stop offset="0.6" stop-color="#7FB2E4"></stop><stop offset="1" stop-color="#6DA1D6"></stop></linearGradient>  <linearGradient id="pm-g3" x1="0" y1="0" x2="0.35" y2="1"><stop offset="0" stop-color="#4E96E0"></stop><stop offset="0.6" stop-color="#3B87D6"></stop><stop offset="1" stop-color="#3078C4"></stop></linearGradient>  <radialGradient id="pm-d1" cx="0.32" cy="0.28" r="0.85"><stop offset="0" stop-color="#A8CCF1"></stop><stop offset="1" stop-color="#7FB2E4"></stop></radialGradient>  <radialGradient id="pm-d2" cx="0.32" cy="0.28" r="0.85"><stop offset="0" stop-color="#5C9CE0"></stop><stop offset="1" stop-color="#3B87D6"></stop></radialGradient>  <filter id="pm-sh" x="-25%" y="-25%" width="150%" height="150%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000000" flood-opacity="0.35"></feDropShadow></filter></defs><g transform="translate(52, 60)" filter="url(#pm-sh)">  <path d="M -34,-24 L -10,0 L -34,24" fill="none" stroke="url(#pm-g1)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"></path>  <path d="M -4,-24 L 20,0 L -4,24" fill="none" stroke="url(#pm-g3)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"></path>  <circle cx="38" cy="0" r="6" fill="url(#pm-d1)"></circle></g></svg>';
+
   var SLIDES = [
     ["31-technology-complexity-to-clarity", "From complexity to a clear system", "Most operations do not need more software. They need the software they already have to make sense together."],
     ["44-process-demo", "A demo before a specification", "We show what we understood as something working, take your notes on it, and only start building once you agree it is right."],
@@ -703,7 +706,7 @@
       });
 
       html +=
-        '<div class="pres__brand"><span class="pres__brand-mark"></span><span class="pres__brand-name">Momentum Link</span></div>' +
+        '<div class="pres__brand"><span class="pres__brand-mark">' + PRES_MARK + '</span><span class="pres__brand-name">MOMENTUM LINK</span></div>' +
         '<div class="pres__caption">' +
           '<p class="pres__num" data-pres-num></p>' +
           '<p class="pres__title" data-pres-title></p>' +

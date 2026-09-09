@@ -457,7 +457,11 @@ def header(page):
   <header class="site-header">
     <div class="site-header__inner">
       <a class="brand" href="index.html" aria-label="Momentum Link Professionals — home">
-        {logo("dark-horizontal")}
+        <span class="brand__mark" aria-hidden="true">{logo("dark-mark")}</span>
+        <span class="brand__text">
+          <span class="brand__name">MOMENTUM LINK</span>
+          <span class="brand__tag">PROFESSIONALS</span>
+        </span>
       </a>
 
       <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-controls="site-nav" aria-label="Menu">
@@ -482,8 +486,8 @@ def footer():
   <footer class="site-footer">
     <div class="site-footer__grid">
       <div class="site-footer__col">
-        <span class="site-footer__brand">{logo("dark-horizontal")}</span>
-        <span class="site-footer__blurb">Quickly linking your business to better technology. Built for delivery, optimized for results.</span>
+        <span class="site-footer__logo">{logo("dark-stacked")}</span>
+        <span class="site-footer__blurb">Built for delivery, optimized for results.</span>
       </div>
       <div class="site-footer__col">
         <span class="site-footer__head">Pages</span>{links}

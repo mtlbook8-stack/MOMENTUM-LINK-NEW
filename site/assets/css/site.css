@@ -251,34 +251,36 @@ a:hover { color: var(--rust); }
   min-height: var(--header-h);
 }
 
-.brand { display: flex; align-items: center; }
+.brand { display: flex; align-items: center; gap: 12px; }
 .brand:hover { color: inherit; }
-.brand svg { display: block; width: auto; height: 34px; }
-.site-footer__brand svg { display: block; width: auto; height: 40px; }
-.brand__mark {
-  width: 11px; height: 11px;
-  background: var(--blue);
-  border-radius: 2px;
-  transform: rotate(45deg);
-  flex: none;
-}
-.brand__text { display: flex; flex-direction: column; gap: 1px; }
+/*
+   The lockup is rebuilt from the mark plus live text. Scaled to header height
+   the supplied horizontal SVG renders "PROFESSIONALS" at under 4px, because
+   its sub-line is 11px inside a 130px artboard.
+*/
+.brand__mark { display: block; width: 30px; height: 30px; flex: none; }
+.brand__mark svg { display: block; width: 100%; height: 100%; }
+.brand__text { display: flex; flex-direction: column; gap: 3px; }
 .brand__name {
-  font-family: var(--serif);
-  font-size: 17px;
-  font-weight: 400;
-  color: var(--cream);
-  letter-spacing: .01em;
+  font-family: 'Archivo', var(--sans);
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: .155em;
+  color: #FFFFFF;
   line-height: 1;
 }
 .brand__tag {
-  font-family: var(--mono);
+  font-family: 'Archivo', var(--sans);
+  font-weight: 600;
   font-size: 8.5px;
-  letter-spacing: .22em;
-  color: rgba(242, 239, 232, .5);
-  text-transform: uppercase;
+  letter-spacing: .40em;
+  color: #7FB2E4;
+  line-height: 1;
 }
 
+/* The stacked lockup carries the motto, so it needs room to stay readable. */
+.site-footer__logo { display: block; width: clamp(280px, 34vw, 380px); }
+.site-footer__logo svg { display: block; width: 100%; height: auto; }
 .nav { display: flex; align-items: center; gap: 4px; }
 .nav__link {
   font-family: var(--mono);
@@ -560,31 +562,38 @@ a:hover { color: var(--rust); }
 /* ── Stats band ───────────────────────────────────────────────────────── */
 
 .stats { background: var(--ink); border-top: 1px solid rgba(242, 239, 232, .12); }
+.stats .shell { padding-block: 44px; }
 
 /*
-   Fixed column counts rather than auto-fit. With auto-fit the four stats
-   could wrap 3 + 1 while the narrow-screen rule was drawing bottom borders,
-   which put a rule straight through the wrapped item's text. Each layout now
-   states exactly which edges carry a divider.
+   Chips rather than hairline dividers. The old rules had to be re-stated at
+   every breakpoint and text kept ending up against them; a chip carries its
+   own edges, so nothing can touch a line that is no longer there.
 */
-.stats__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
-.stats__item {
-  padding: 34px 26px 34px 0;
-  border-right: 1px solid rgba(242, 239, 232, .1);
+.stats__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
 }
-.stats__item:last-child { border-right: 0; padding-right: 0; }
+.stats__item {
+  padding: 30px 26px;
+  border-radius: 14px;
+  background: rgba(242, 239, 232, .055);
+  border: 1px solid rgba(242, 239, 232, .13);
+  transition: background .3s ease, border-color .3s ease;
+}
+.stats__item:hover { background: rgba(242, 239, 232, .085); border-color: rgba(242, 239, 232, .22); }
 .stats__n {
   font-family: var(--serif);
-  font-size: 42px;
+  font-size: 46px;
   font-weight: 300;
   color: var(--blue);
   line-height: 1;
 }
 .stats__label {
-  font-size: 14px;
-  color: rgba(242, 239, 232, .66);
-  margin-top: 8px;
-  line-height: 1.45;
+  font-size: 14.5px;
+  color: rgba(242, 239, 232, .72);
+  margin-top: 12px;
+  line-height: 1.5;
 }
 
 /* ── Editorial two-column section ─────────────────────────────────────── */
@@ -1637,8 +1646,15 @@ a:hover { color: var(--rust); }
   display: flex; align-items: center; gap: 10px;
   pointer-events: none;
 }
-.pres__brand-mark { width: 9px; height: 9px; background: var(--blue); transform: rotate(45deg); }
-.pres__brand-name { font-family: var(--serif); font-size: 16px; color: rgba(247, 245, 240, .9); }
+.pres__brand-mark { display: block; width: 26px; height: 26px; }
+.pres__brand-mark svg { display: block; width: 100%; height: 100%; }
+.pres__brand-name {
+  font-family: 'Archivo', var(--sans);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: .16em;
+  color: rgba(247, 245, 240, .92);
+}
 .pres__controls {
   position: absolute;
   top: 24px; right: 26px;
@@ -1808,20 +1824,13 @@ a:hover { color: var(--rust); }
 
   .contact-grid { padding-top: 48px; gap: 36px; }
   .stats__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .stats__item { padding: 26px 20px 26px 0; border-right: 1px solid rgba(242, 239, 232, .1); }
-  .stats__item:nth-child(2n) { border-right: 0; padding-right: 0; }
-  .stats__item:nth-child(-n+2) { border-bottom: 1px solid rgba(242, 239, 232, .1); padding-bottom: 26px; }
-  .stats__item:nth-child(n+3) { padding-top: 26px; }
   .pres__edge { bottom: 120px; width: 20%; }
   .pres__controls { top: 18px; right: 18px; }
   .pres__brand { top: 20px; left: 18px; }
 }
 
 @media (max-width: 560px) {
-  /* One per row: dividers stack with them. */
   .stats__grid { grid-template-columns: minmax(0, 1fr); }
-  .stats__item { border-right: 0; padding: 24px 0; border-bottom: 1px solid rgba(242, 239, 232, .1); }
-  .stats__item:last-child { border-bottom: 0; }
 
   .stage__pin { min-height: 460px; }
   .card-grid, .card-grid--tech, .card-grid--items { grid-template-columns: 1fr; }
