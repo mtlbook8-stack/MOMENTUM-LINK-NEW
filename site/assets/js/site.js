@@ -21,6 +21,30 @@
      their URLs in data attributes; this puts them back when they are wanted.
      -------------------------------------------------------------------- */
 
+  /* Marks a picture as still arriving, so its space shows a sheen rather
+     than sitting blank, and clears it once the picture has decoded. */
+  function watchImage(img) {
+    if (!img || img.__mlWatched) return;
+    img.__mlWatched = true;
+
+    function done() {
+      img.classList.add("is-loaded");
+      img.__mlWatched = false;
+    }
+
+    // A deferred picture holds a blank placeholder, which counts as complete.
+    if (img.complete && img.naturalWidth > 1 && !img.hasAttribute("data-src")) {
+      done();
+      return;
+    }
+    img.addEventListener("load", done, { once: true });
+    img.addEventListener("error", done, { once: true });   // no endless sheen
+  }
+
+  function watchImages(scope) {
+    $$("img", scope || document).forEach(watchImage);
+  }
+
   function hydrate(scope) {
     if (!scope) return;
     var pics = scope.hasAttribute && scope.hasAttribute("data-defer")
@@ -39,6 +63,7 @@
         img.removeAttribute("data-src");
       }
       pic.removeAttribute("data-defer");
+      if (img) { img.classList.remove("is-loaded"); img.__mlWatched = false; watchImage(img); }
     });
   }
 
@@ -762,6 +787,7 @@
       document.body.appendChild(root);
 
       slideEls = $$(".pres__slide", root);
+      watchImages(root);
       tickFills = $$(".pres__tick i", root);
       numEl = $("[data-pres-num]", root);
       titleEl = $("[data-pres-title]", root);
@@ -1075,6 +1101,7 @@
   /* ── Boot ──────────────────────────────────────────────────────────── */
 
   function boot() {
+    watchImages();
     initNav();
     initReveal();
     initCards();

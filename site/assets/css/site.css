@@ -145,6 +145,42 @@ body[data-page="contact"]::before {
 
 img { max-width: 100%; display: block; }
 
+/* ── Loading state for pictures ───────────────────────────────────────────
+   Text arrives first; a picture's space should not sit blank while it is on
+   its way. Every image carries a moving sheen until it has decoded, drawn on
+   the image's own background so it shows through the transparent element and
+   is covered the moment the picture paints. The mid grey reads against both
+   the dark card grounds and the light media wells.
+   ------------------------------------------------------------------------ */
+
+@keyframes mlShimmer {
+  from { background-position: 200% 0; }
+  to   { background-position: -200% 0; }
+}
+
+.js img:not(.is-loaded) {
+  background-image: linear-gradient(
+    100deg,
+    rgba(125, 136, 148, 0) 18%,
+    rgba(125, 136, 148, .28) 38%,
+    rgba(125, 136, 148, .28) 46%,
+    rgba(125, 136, 148, 0) 66%
+  );
+  background-size: 220% 100%;
+  background-repeat: no-repeat;
+  animation: mlShimmer 1.5s linear infinite;
+}
+.js img.is-loaded { background-image: none; animation: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  /* A steady tint rather than a moving one. */
+  .js img:not(.is-loaded) {
+    animation: none;
+    background-image: linear-gradient(rgba(125, 136, 148, .22), rgba(125, 136, 148, .22));
+    background-size: 100% 100%;
+  }
+}
+
 a { color: var(--blue-dark); text-decoration: none; }
 a:hover { color: var(--rust); }
 
