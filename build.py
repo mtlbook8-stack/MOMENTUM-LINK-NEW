@@ -12,6 +12,7 @@ Output goes to ./site — the folder you deploy.
 
 import hashlib
 import html
+import json
 import os
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -20,6 +21,12 @@ OUT = os.path.join(HERE, "site")
 # Set this to the live origin (no trailing slash) to emit absolute canonical
 # and Open Graph URLs; leave empty for relative-only output.
 BASE_URL = "https://mtlbook8-stack.github.io/MOMENTUM-LINK-NEW"
+
+try:
+    with open(os.path.join(OUT, "media", "manifest.json"), encoding="utf-8") as _fh:
+        MEDIA_SIZES = json.load(_fh)
+except OSError:
+    MEDIA_SIZES = {}
 
 EMAIL_NEW = "hello@momentumlink.com"
 EMAIL_CARE = "hello@momentumlink.com"
@@ -40,7 +47,7 @@ PRACTICE = [
     {
         "num": "01",
         "label": "Meet",
-        "stem": "01-practice-understand-business-workflow",
+        "stem": "43-process-meeting",
         "title": "A meeting, or a few",
         "short": "One or two conversations to establish what the project actually needs.",
         "body": "We do not open with a discovery programme. A meeting — sometimes a few — is usually enough to establish what the product has to do, who it is for, and what would count as finished. Anything still unclear goes on the list to settle at the demo rather than holding the project up.",
@@ -49,7 +56,7 @@ PRACTICE = [
     {
         "num": "02",
         "label": "Demo",
-        "stem": "03-practice-tailored-client-workspace",
+        "stem": "44-process-demo",
         "title": "A demo that shows what we understood",
         "short": "You see our understanding as something working, before it is built.",
         "body": "Rather than hand back a specification for you to imagine, we build a demo that shows what we understood and put it in front of you. You mark it up, we correct it, and the build does not start in earnest until you agree it is right.",
@@ -58,7 +65,7 @@ PRACTICE = [
     {
         "num": "03",
         "label": "Build",
-        "stem": "23-technology-workflow-automation",
+        "stem": "45-process-cicd-pipeline",
         "title": "Rapid build, tested and shipped",
         "short": "Built quickly, deployed through CI/CD, and properly tested before it ships.",
         "body": "The build moves fast because deployment is automated — a short CI/CD workflow puts each change in front of you without ceremony. Testing is not what gets cut for it: before a release goes out it goes through a comprehensive session, a good deal of it by hand, because that is what actually finds the things that matter.",
@@ -76,7 +83,7 @@ PRACTICE = [
     {
         "num": "05",
         "label": "Handover",
-        "stem": "22-technology-cross-platform-apps",
+        "stem": "46-process-handover",
         "title": "Complete, and handed over in full",
         "short": "When the changes stop earning their place, the work is done.",
         "body": "How long that takes depends on the product. When the iterations stop earning their place the work is complete, and the product, its code and everything needed to run it are handed over. The measure is simple: everyone is satisfied with what they got.",
@@ -237,11 +244,12 @@ def picture(stem, alt, sizes, eager=False, cls=""):
     """Responsive <picture> with a WebP source and a JPEG fallback."""
     loading = 'loading="eager" fetchpriority="high"' if eager else 'loading="lazy"'
     class_attr = f' class="{cls}"' if cls else ""
+    w, h = media_size(stem)
     return (
         "<picture>"
         f'<source type="image/webp" srcset="media/{stem}-768.webp 768w, media/{stem}.webp 1536w" sizes="{sizes}">'
         f'<img{class_attr} src="media/{stem}.jpg" srcset="media/{stem}-768.jpg 768w, media/{stem}.jpg 1536w"'
-        f' sizes="{sizes}" alt="{e(alt)}" width="1536" height="1024" {loading} decoding="async">'
+        f' sizes="{sizes}" alt="{e(alt)}" width="{w}" height="{h}" {loading} decoding="async">'
         "</picture>"
     )
 
@@ -255,14 +263,22 @@ def layer_img(stem, alt, sizes, cls="", eager=False, attrs=""):
     loading = 'loading="eager" fetchpriority="high"' if eager else 'loading="lazy"'
     extra = f" {attrs}" if attrs else ""
     hidden = ' aria-hidden="true"' if not alt else ""
+    w, h = media_size(stem)
     return (
         "<picture>"
         f'<source type="image/webp" srcset="media/{stem}-768.webp 768w, media/{stem}.webp 1536w" sizes="{sizes}">'
         f'<img class="{cls}"{extra} src="media/{stem}.jpg"'
         f' srcset="media/{stem}-768.jpg 768w, media/{stem}.jpg 1536w" sizes="{sizes}"'
-        f' alt="{e(alt)}"{hidden} width="1536" height="1024" {loading} decoding="async">'
+        f' alt="{e(alt)}"{hidden} width="{w}" height="{h}" {loading} decoding="async">'
         "</picture>"
     )
+
+
+def media_size(stem):
+    """Real intrinsic size of an image, from the manifest build-media.py writes.
+    The sources are not all one shape, and a wrong width/height causes layout
+    shift while the picture loads."""
+    return tuple(MEDIA_SIZES.get(stem, (1536, 1024)))
 
 
 def asset_version(relpath):

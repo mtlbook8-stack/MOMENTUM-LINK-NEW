@@ -643,7 +643,7 @@
 
   var SLIDES = [
     ["31-technology-complexity-to-clarity", "From complexity to a clear system", "Most operations do not need more software. They need the software they already have to make sense together."],
-    ["03-practice-tailored-client-workspace", "A demo before a specification", "We show what we understood as something working, take your notes on it, and only start building once you agree it is right."],
+    ["44-process-demo", "A demo before a specification", "We show what we understood as something working, take your notes on it, and only start building once you agree it is right."],
     ["07-industry-smart-manufacturing", "Manufacturing", "Production monitoring, scheduling, and true product cost answering to one set of numbers."],
     ["09-industry-construction-project-management", "Construction", "Preconstruction through final billing, with the change orders that decide whether a job made money."],
     ["11-industry-wholesale-distribution", "Wholesale distribution", "Ordering, fulfilment, inventory and both sides of the ledger at transaction density."],
