@@ -1162,7 +1162,7 @@ a:hover { color: var(--rust); }
   /* Growth starts at the rail edge, so the panel unfolds out of its point. */
   transform-origin: left center;
 }
-.step__media { aspect-ratio: 16 / 9; overflow: hidden; background: var(--rule); }
+.step__media { aspect-ratio: var(--media-ratio, 16 / 9); overflow: hidden; background: var(--rule); }
 .step__media img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.6s var(--ease-out); }
 .step:hover .step__media img { transform: scale(1.05); }
 .step__copy { display: flex; flex-direction: column; gap: 13px; }
@@ -1191,7 +1191,11 @@ a:hover { color: var(--rust); }
 
 @media (min-width: 900px) {
   .step__inner { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 34px; align-items: center; }
-  .step__media { aspect-ratio: 4 / 3; }
+  .step__media { aspect-ratio: var(--media-ratio, 4 / 3); }
+
+  /* A panoramic still gets the whole width instead of being cut to fit a
+     column — the panel has the room, so the picture stays whole. */
+  .step__inner--wide { grid-template-columns: minmax(0, 1fr); gap: 26px; }
 }
 
 @media (max-width: 900px) {
@@ -1247,7 +1251,9 @@ a:hover { color: var(--rust); }
   }
   .process.is-pinned .process__track { left: 22px; right: 22px; }
   .process.is-pinned .step__inner { padding: 18px; gap: 16px; }
-  .process.is-pinned .step__media { aspect-ratio: 2 / 1; }
+  /* Capped so the panel still fits the pinned area; at these ratios
+     nothing actually crops on a phone. */
+  .process.is-pinned .step__media { aspect-ratio: var(--media-ratio, 2 / 1); max-height: 30vh; }
   .process.is-pinned .step__body { font-size: 15px; line-height: 1.55; }
   .process.is-pinned .step__title { font-size: clamp(21px, 5.6vw, 26px); }
 }

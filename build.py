@@ -594,10 +594,16 @@ def build_practice():
             </a>
           </li>"""
 
+        w, h = media_size(p["stem"])
+        # The frame takes the picture's own proportions rather than forcing a
+        # crop; a panoramic one drops the side-by-side layout and runs the
+        # full width of the panel, where there is room for it.
+        wide = " step__inner--wide" if w / h >= 2.2 else ""
+
         steps += f"""
         <article class="step" id="step-{p['num']}" data-step>
-          <div class="step__inner">
-            <div class="step__media">{picture(p['stem'], p['title'], SIZES['half'])}</div>
+          <div class="step__inner{wide}">
+            <div class="step__media" style="--media-ratio:{w}/{h}">{picture(p['stem'], p['title'], SIZES['half'])}</div>
             <div class="step__copy">
               <p class="step__num">{p['num']} &middot; {e(p['label'])}</p>
               <h2 class="step__title">{e(p['title'])}</h2>
