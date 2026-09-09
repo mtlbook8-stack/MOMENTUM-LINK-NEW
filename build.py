@@ -31,7 +31,7 @@ except OSError:
 # Web3Forms access key. Get one at https://web3forms.com (free, emailed to
 # you). Until this is filled in the forms fall back to opening the visitor's
 # mail client, so nothing is silently dropped.
-WEB3FORMS_KEY = ""
+WEB3FORMS_KEY = "9cf20289-3ef2-48a5-9e5a-fce82434f151"
 WEB3FORMS_URL = "https://api.web3forms.com/submit"
 
 EMAIL_NEW = "hello@momentumlink.com"

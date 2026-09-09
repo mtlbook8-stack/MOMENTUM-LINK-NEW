@@ -48,29 +48,25 @@ Editing the HTML directly works too, but the next `build.py` run overwrites it.
 Presentation slides are the exception: they are in `site/assets/js/site.js` (`SLIDES`),
 because the overlay is built in the browser.
 
-## Making the contact form send
+## The contact form
 
-The form validates in the browser and then does one of two things:
+Both forms — the one on the contact page and the one in the Get in touch modal —
+are built from `contact_form()` in `build.py`, so they cannot drift apart. They post
+to Web3Forms, which emails the submission to the address the key is registered to.
 
-- **No endpoint configured (current state):** it opens the visitor's email client with
-  the brief pre-filled, addressed to `hello@momentumlink.example`.
-- **Endpoint configured:** it POSTs the fields as `FormData` and shows a success or
-  failure message without leaving the page.
+The access key lives in `build.py`:
 
-To switch it on, set the endpoint on the `<form>` in `build.py` (`build_contact`, the
-`data-endpoint` attribute) and rebuild:
-
-```html
-<form ... data-endpoint="https://formspree.io/f/yourid" ...>
+```python
+WEB3FORMS_KEY = "9cf20289-3ef2-48a5-9e5a-fce82434f151"
 ```
 
-Any service that accepts a `multipart/form-data` POST works (Formspree, Basin, Netlify
-Forms, or your own handler). Fields sent: `name`, `organisation`, `sector`, `email`,
-`message`.
+It is a publishable key by design — Web3Forms keys sit in client-side HTML and only
+allow submitting to the inbox they are bound to. Clearing it makes both forms fall
+back to opening the visitor's mail client, so a message is never silently dropped.
 
-**Replace the placeholder contact details before going live** — the email addresses
-(`…@momentumlink.example`) and phone number in `build.py` are the design's placeholders,
-not real ones.
+Fields sent: `name`, `organisation`, `sector`, `email`, `message` from the contact
+page; `name`, `email`, `message` from the modal. A hidden `botcheck` honeypot goes
+with them.
 
 ## Deployment
 
