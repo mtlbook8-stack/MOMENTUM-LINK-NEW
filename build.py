@@ -110,9 +110,9 @@ PRACTICE = [
 SECTORS = [
     {
         "slug": "manufacturing",
-        "name": "Manufacturing",
+        "name": "Manufacturing & Logistics",
         "count": "2 capabilities",
-        "blurb": "Connected production floors where monitoring, scheduling and product costing answer to the same set of numbers.",
+        "blurb": "One source of truth for stock and status — what you hold, where it is, and what is moving right now. Production runs to demand off live data, so you always know what you need and where everything is.",
         "lead": ("07-industry-smart-manufacturing", "Smart Manufacturing"),
         "items": [
             ("42-industry-assembly-bom-product-cost", "Assembly, bill of materials, and true product cost"),
@@ -122,10 +122,10 @@ SECTORS = [
         "slug": "construction",
         "name": "Construction",
         "count": "3 capabilities",
-        "blurb": "Preconstruction through final billing, with the change orders and progress claims that decide whether a job made money.",
+        "blurb": "Two halves. Billing you can actually review — bids and offers compared against the plans before a claim gets paid. And plan-driven rendering and automation, from excavation to pipe layout to interior fit-out. It is a fast-moving market, and we keep you on the best of it.",
         "lead": ("09-industry-construction-project-management", "Construction Project Management and Accounting"),
         "items": [
-            ("08-industry-construction-planning", "Planning and preconstruction accounting"),
+            ("08-industry-construction-planning", "Bid review, planning and preconstruction accounting"),
             ("38-industry-construction-change-orders-billing", "Change orders and progress billing"),
         ],
     },
@@ -133,13 +133,13 @@ SECTORS = [
         "slug": "wholesale-distribution",
         "name": "Wholesale Distribution",
         "count": "6 capabilities",
-        "blurb": "Ordering, fulfilment, inventory and both sides of the ledger — the density of transactions is the design problem.",
+        "blurb": "Accounting, billing and collection you can rely on, inventory that matches the shelf, and follow-up that catches a change in a customer's ordering before they raise it themselves. Every account gets a personal experience, however many you carry.",
         "lead": ("11-industry-wholesale-distribution", "Wholesale Distribution and Fulfillment"),
         "items": [
             ("12-industry-wholesale-inventory-pricing", "Inventory, purchasing, and pricing"),
             ("37-industry-wholesale-customer-ordering", "Customer ordering and replenishment"),
             ("41-industry-recurring-wholesale-orders", "Recurring orders for hospitality"),
-            ("10-industry-wholesale-accounts-receivable", "Accounts receivable"),
+            ("10-industry-wholesale-accounts-receivable", "Accounts receivable and collection"),
             ("39-industry-wholesale-accounts-payable", "Accounts payable and supplier reconciliation"),
         ],
     },
@@ -147,11 +147,11 @@ SECTORS = [
         "slug": "property",
         "name": "Property",
         "count": "4 capabilities",
-        "blurb": "Multi-property operations where leasing, maintenance and owner reporting have to reconcile every month without heroics.",
+        "blurb": "Billing and reports that show where every dollar goes, and tenants who stay satisfied. Residential or commercial — every town and municipality has its own requirements, and we deliver against the ones that apply to you.",
         "lead": ("13-industry-multi-property-management", "Multi-Property Operations and Accounting"),
         "items": [
             ("36-industry-property-leasing-occupancy", "Leasing and occupancy"),
-            ("14-industry-property-maintenance", "Maintenance and tenant service"),
+            ("14-industry-property-maintenance", "Maintenance and tenant satisfaction"),
             ("40-industry-property-financial-operations", "Rent, expenses, and owner reporting"),
         ],
     },
@@ -159,12 +159,23 @@ SECTORS = [
         "slug": "retail-ecommerce",
         "name": "Retail & Ecommerce",
         "count": "4 capabilities",
-        "blurb": "Storefronts that stay fast under load, findable in search, and worth returning to after the first order.",
+        "blurb": "Changes driven by what customers actually do — which journeys convert, which ones stall, what gets returned. Aggregate behaviour, measured honestly, turned into changes whose results you can see.",
         "lead": ("15-industry-premium-retail-website", "Premium Retail Website Experience"),
         "items": [
             ("16-industry-high-traffic-ecommerce", "High-traffic ecommerce performance"),
             ("17-industry-seo-content-visibility", "Search visibility and content structure"),
-            ("18-industry-conversion-retention", "Conversion and customer retention"),
+            ("18-industry-conversion-retention", "Conversion and retention, measured"),
+        ],
+    },
+    {
+        "slug": "telecommunications",
+        "name": "Telecommunications",
+        "count": "3 capabilities",
+        "blurb": "Integrate what you already run, build the infrastructure from scratch, or just fill the gaps in it. Voice, SMS and MMS carried at lightning speed and the best quality the traffic will allow.",
+        "lead": ("47-industry-telecom-voice", "Voice routing and termination"),
+        "items": [
+            ("48-industry-telecom-sms", "SMS delivery at scale"),
+            ("49-industry-telecom-mms", "MMS and rich messaging"),
         ],
     },
 ]
@@ -228,7 +239,7 @@ CONTACTS = [
 FIELDS = [
     ("name", "Name", "Your name", "text", True),
     ("organisation", "Organisation", "Company or group", "text", True),
-    ("sector", "Sector", "Manufacturing, construction, wholesale…", "text", False),
+    ("sector", "Sector", "Manufacturing, construction, telecoms…", "text", False),
     ("email", "Email", "you@company.com", "email", True),
 ]
 
@@ -769,7 +780,7 @@ def build_industries():
   <main id="main">
     <section class="page-head shell">
       <p class="eyebrow">Industries</p>
-      <h1 class="display">Five sectors we know at the workflow level.</h1>
+      <h1 class="display">Six sectors we know at the workflow level.</h1>
       <p class="lede">Each of these carries its own accounting shape, its own exceptions, and its own reasons a generic implementation fails.</p>
     </section>
 {sections}
@@ -778,7 +789,7 @@ def build_industries():
     return page(
         "industries.html", "industries",
         "Industries — Momentum Link Professionals",
-        "Manufacturing, construction, wholesale distribution, property and retail commerce — five sectors understood at the workflow level, each with its own accounting shape and exceptions.",
+        "Manufacturing and logistics, construction, wholesale distribution, property, retail commerce and telecommunications — six sectors understood at the workflow level, each with its own accounting shape and exceptions.",
         body,
     )
 

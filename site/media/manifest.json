@@ -182,5 +182,17 @@
  "46-process-handover": [
   1536,
   1024
+ ],
+ "47-industry-telecom-voice": [
+  1536,
+  864
+ ],
+ "48-industry-telecom-sms": [
+  1536,
+  864
+ ],
+ "49-industry-telecom-mms": [
+  1536,
+  1024
  ]
 }
