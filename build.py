@@ -176,10 +176,34 @@ TECH = [
 ]
 
 STATS = [
-    ("1&#8211;2", "Meetings before you see a working demo"),
-    ("5", "Steps from first meeting to handover"),
-    ("17", "Technology disciplines maintained in-house"),
+    ("100%", "Tailored solutions — never off-the-shelf shortcuts"),
+    ("Fast", "Delivery times, from planning to launch"),
+    ("Real", "Working agents that finish the job"),
     ("&#8734;", "Rounds of feedback — we iterate until you are satisfied"),
+]
+
+# What We Do, as the live site states it.
+SERVICES = [
+    ("33-technology-modular-product-evolution", "Custom Software Builds",
+     "We design and build software tailored to your exact business needs — not off-the-shelf shortcuts."),
+    ("31-technology-complexity-to-clarity", "System Migrations",
+     "We bridge the gap between outdated systems and modern technology — handling the entire transition end to end."),
+    ("25-technology-responsible-ai", "Smart Agents",
+     "Working agents that handle real tasks — automation that finishes the job and frees up your team."),
+    ("27-technology-digital-twin", "Tech Research &amp; Strategy",
+     "We constantly research the latest technology so you always get the best option — not just an option."),
+    ("35-technology-continuous-improvement", "Optimization &amp; Tuning",
+     "We optimize every solution to fit your specific use case — performance, cost, and workflow all dialled in."),
+    ("20-technology-cloud-native-systems", "Full Delivery",
+     "From planning to launch to support — we handle the whole journey. You just use what we build."),
+]
+
+# The four points the live site makes about closing the gap.
+GAP_POINTS = [
+    "We research the latest technology daily",
+    "We migrate you smoothly from old to new",
+    "We tailor every build to your exact use case",
+    "We handle the entire delivery",
 ]
 
 CONTACTS = [
@@ -329,7 +353,7 @@ def footer():
     <div class="site-footer__grid">
       <div class="site-footer__col">
         <span class="site-footer__brand">Momentum Link</span>
-        <span class="site-footer__blurb">Business software fitted to real operations — manufacturing, construction, wholesale, property, and commerce.</span>
+        <span class="site-footer__blurb">Quickly linking your business to better technology. Built for delivery, optimized for results.</span>
       </div>
       <div class="site-footer__col">
         <span class="site-footer__head">Pages</span>{links}
@@ -412,7 +436,23 @@ def stats_band():
 
 # ── Pages ─────────────────────────────────────────────────────────────────
 
+def service_cards():
+    out = ""
+    for stem, title, blurb in SERVICES:
+        out += f"""
+          <figure class="card card--tech" data-card data-reveal>
+            {picture(stem, title.replace("&amp;", "and"), SIZES['card'])}
+            <figcaption>
+              <span class="card__title">{title}</span>
+              <span class="card__sub">{e(blurb)}</span>
+            </figcaption>
+          </figure>"""
+    return out
+
+
 def build_home():
+    gap = "".join("<li>" + e(point) + "</li>" for point in GAP_POINTS)
+
     body = f"""
   <main id="main">
     <section class="stage" data-stage aria-label="Introduction">
@@ -431,26 +471,26 @@ def build_home():
         </div>
 
         <div class="stage__l2" data-stage-l2 aria-hidden="true">
-          {layer_img('30-technology-connected-ecosystem', '', SIZES['full'], eager=True)}
+          {layer_img('30-technology-connected-ecosystem', '', SIZES['full'])}
         </div>
 
         <div class="stage__tint" data-stage-tint aria-hidden="true"></div>
 
         <div class="stage__block" data-stage-a>
           <div class="stage__inner">
-            <p class="stage__kicker">Business software, built around your operation</p>
-            <h1 class="stage__title">Software that fits how the work already happens.</h1>
+            <p class="stage__kicker">Modern technology solutions</p>
+            <h1 class="stage__title">Quickly linking your business to better tech.</h1>
           </div>
         </div>
 
         <div class="stage__block" data-stage-b>
           <div class="stage__inner">
-            <p class="stage__kicker">One network — sites, plants, storefronts</p>
-            <p class="stage__title stage__title--sub">Understood first. Connected second. Maintained for years.</p>
+            <p class="stage__kicker">Build &middot; Migrate &middot; Deliver</p>
+            <p class="stage__title stage__title--sub">We build, migrate, and deliver modern software solutions — so your technology works for you, not the other way around.</p>
             <div class="stage__actions">
-              <a class="btn btn--primary" href="practice.html">How we work</a>
+              <a class="btn btn--primary" href="contact.html">Get started</a>
               <button class="btn btn--ghost" type="button" data-open-pres hidden>&#9654; Watch the presentation</button>
-              <a class="btn btn--ghost" href="industries.html">Industries we serve</a>
+              <a class="btn btn--ghost" href="practice.html">How we work</a>
             </div>
           </div>
         </div>
@@ -467,18 +507,21 @@ def build_home():
     <section class="editorial shell">
       <div class="editorial__grid">
         <div>
-          <p class="eyebrow">01 — The problem</p>
-          <h2 class="editorial__title">A specification is hard to picture. A demo is not.</h2>
+          <p class="eyebrow">01 — The gap</p>
+          <h2 class="editorial__title">Tech moves fast. We make sure you do too.</h2>
         </div>
         <div class="editorial__body">
-          <p>Written requirements get signed off long before anyone can see what they will actually get. Everyone reads the same document differently, and the gap only shows up late — when changing it is expensive.</p>
-          <p>So we put a working demo in front of you early, correct it against your notes, and build once you agree it is right. The disagreements happen while they are still cheap.</p>
+          <p>Most businesses cannot keep up with the technology industry. There is no time to research every option, evaluate the noise, and migrate to better systems — so they stay on what they have, and miss the upside.</p>
+          <p>That is exactly the gap we close.</p>
+          <ul class="editorial__list">{gap}
+          </ul>
         </div>
       </div>
     </section>
 
-    <section class="card-section shell" aria-label="How we work">
-      <div class="card-grid">{practice_cards()}
+    <section class="card-section shell" aria-label="What we do">
+      <p class="eyebrow" style="margin-bottom:20px">02 — What we do</p>
+      <div class="card-grid card-grid--tech">{service_cards()}
       </div>
     </section>
 
@@ -487,29 +530,35 @@ def build_home():
       <div class="band__veil" aria-hidden="true"></div>
       <div class="band__inner shell">
         <div class="band__copy">
-          <p class="eyebrow eyebrow--blue">02 — Reach</p>
-          <h2 class="band__title">One network across sites, plants, and storefronts.</h2>
-          <p class="band__text">Manufacturing floors, construction schedules, distribution centres, property portfolios and commerce fronts — connected through integration rather than replacement.</p>
+          <p class="eyebrow eyebrow--blue">03 — Smart agents</p>
+          <h2 class="band__title">Smart agents. Real work.</h2>
+          <p class="band__text">Not magic. Not buzzwords. Just technology that actually gets the job done. We build agents that handle real tasks — they do the work, finish the job, and free up your team.</p>
           <a class="btn btn--ghost btn--ghost-fill" href="technology.html">Technology capability</a>
         </div>
       </div>
     </section>
 
     <section class="panels-section shell" aria-label="Sectors">
-      <p class="eyebrow" style="margin-bottom:16px">03 — Sectors</p>
+      <p class="eyebrow" style="margin-bottom:16px">04 — Sectors</p>
       <div class="panels">{sector_panels()}
       </div>
       <p class="panels-hint">
-        <span class="panels-hint__pointer">Hover to expand · click to open the sector</span>
-        <span class="panels-hint__touch">Tap to expand · tap again to open the sector</span>
+        <span class="panels-hint__pointer">Hover to expand &middot; click to open the sector</span>
+        <span class="panels-hint__touch">Tap to expand &middot; tap again to open the sector</span>
       </p>
+    </section>
+
+    <section class="closing shell">
+      <p class="eyebrow">Ready to move forward?</p>
+      <h2 class="closing__title">Let&#8217;s link your business to better technology.</h2>
+      <a class="btn btn--dark" href="contact.html">Get in touch</a>
     </section>
   </main>
 """
     return page(
         "index.html", "home",
-        "Momentum Link Professionals — Business software fitted to real operations",
-        "Business software built around how your operation already works. Manufacturing, construction, wholesale distribution, property and commerce — understood first, connected second, maintained for years.",
+        "Momentum Link Professionals — Quickly linking your business to better tech",
+        "We build, migrate, and deliver modern software solutions — so your technology works for you, not the other way around. Custom builds, system migrations and smart agents that do real work.",
         body,
     )
 
@@ -693,9 +742,9 @@ def build_contact():
       {layer_img('06-practice-long-term-technology-care', 'A long-term technology relationship', SIZES['full'], cls='band__bg', eager=True)}
       <div class="band__veil" aria-hidden="true"></div>
       <div class="band__inner shell">
-        <p class="eyebrow eyebrow--blue">Start a conversation</p>
-        <h1 class="display">Tell us how the work actually happens.</h1>
-        <p class="lede">First conversations are about your operation, not our software. Expect questions about approvals, exceptions, and the reports nobody trusts.</p>
+        <p class="eyebrow eyebrow--blue">Get started</p>
+        <h1 class="display">Let&#8217;s get to work.</h1>
+        <p class="lede">Tell us about your business — we will handle the technology. A meeting or two is usually all it takes before you are looking at a working demo.</p>
       </div>
     </section>
 
@@ -723,7 +772,7 @@ def build_contact():
     return page(
         "contact.html", "contact",
         "Contact — Momentum Link Professionals",
-        "Start a conversation about your operation. Send a brief, or reach the team by email or phone — first conversations are about how the work happens, not about software.",
+        "Tell us about your business and we will handle the technology. Reach Momentum Link Professionals by email or phone, or send a brief.",
         body,
     )
 

@@ -596,6 +596,49 @@ a:hover { color: var(--rust); }
 }
 .editorial__body { display: flex; flex-direction: column; gap: 20px; padding-top: 6px; }
 .editorial__body p { font-size: 17px; line-height: 1.68; margin: 0; color: var(--slate-body); }
+.editorial__list {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+.editorial__list li {
+  position: relative;
+  padding-left: 26px;
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.5;
+  letter-spacing: .02em;
+  color: var(--slate-dark);
+}
+.editorial__list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: .52em;
+  width: 7px; height: 7px;
+  border-radius: 2px;
+  background: var(--blue);
+  transform: rotate(45deg);
+}
+
+/* Closing call to action */
+.closing {
+  padding: 96px var(--gutter) 112px;
+  border-top: 1px solid var(--rule-strong);
+  text-align: center;
+}
+.closing__title {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(28px, 3.8vw, 46px);
+  line-height: 1.12;
+  letter-spacing: -.018em;
+  margin: 18px 0 30px;
+}
+.closing .btn--dark { align-self: center; }
 
 /* ── Media cards ──────────────────────────────────────────────────────── */
 
