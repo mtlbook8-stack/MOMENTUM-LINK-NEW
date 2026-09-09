@@ -878,7 +878,8 @@ def build_contact():
     </section>
 
     <section class="contact-grid shell">
-      <div class="contact-list">{items}
+      <div class="contact-list">
+        <span class="logo-block logo-block--left">{logo("light-stacked")}</span>{items}
       </div>
 
 {contact_form("c", "Send a brief", "Send brief")}
@@ -956,6 +957,7 @@ def build_about():
     </section>
 
     <section class="closing shell">
+      <span class="logo-block">{logo("light-stacked")}</span>
       <p class="eyebrow">Ready to move forward?</p>
       <h2 class="closing__title">Let&#8217;s talk about where your business is — and where it could be.</h2>
       <a class="btn btn--dark" href="contact.html" data-open-contact>Get in touch</a>
@@ -995,16 +997,23 @@ def build_404():
 def build_extras():
     written = []
 
-    favicon = (
-        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">'
-        '<rect width="240" height="240" fill="#10222F"/>'
-        '<rect x="98" y="98" width="44" height="44" rx="4" fill="#4A9BE8" transform="rotate(45 120 120)"/>'
-        '<rect x="72" y="168" width="96" height="3" fill="#F2EFE8" opacity="0.7"/>'
-        "</svg>\n"
-    )
-    with open(os.path.join(OUT, "favicon.svg"), "w", encoding="utf-8") as fh:
-        fh.write(favicon)
-    written.append("favicon.svg")
+    # Built from the real mark on the brand ground, so a rebuild cannot put
+    # the old placeholder diamond back.
+    mark_path = os.path.join(OUT, "assets", "logo", "momentum-link-dark-mark.inline.svg")
+    try:
+        with open(mark_path, encoding="utf-8") as fh:
+            mark = fh.read()
+        inner = mark.split(">", 1)[1].rsplit("</svg>", 1)[0]
+        favicon = (
+            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">'
+            '<rect width="120" height="120" rx="22" fill="#10222F"/>'
+            + inner + "</svg>"
+        )
+        with open(os.path.join(OUT, "favicon.svg"), "w", encoding="utf-8") as fh:
+            fh.write(favicon)
+        written.append("favicon.svg")
+    except OSError:
+        written.append("favicon.svg (skipped: mark missing)")
 
     root = BASE_URL or "https://example.com"
     urls = "".join(

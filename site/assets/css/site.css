@@ -1495,6 +1495,15 @@ a:hover { color: var(--rust); }
   max-width: 52ch;
 }
 
+/* The light lockup, for cream sections. */
+.logo-block {
+  display: block;
+  width: clamp(260px, 30vw, 340px);
+  margin: 0 auto 26px;
+}
+.logo-block--left { margin: 0 0 30px; }
+.logo-block svg { display: block; width: 100%; height: auto; }
+
 /* ── Get in touch modal ───────────────────────────────────────────────── */
 
 .modal {
